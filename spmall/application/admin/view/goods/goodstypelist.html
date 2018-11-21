@@ -1,0 +1,232 @@
+{include file="public/header"}
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">商品管理</a>
+        <a>
+          <cite>商品模型</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：商品模型是用来规定某一类商品共有规格和属性的集合，其中规格会影响商品价格，同一个商品不同的规格价格不同，而属性仅仅是商品的属性特质展示</blockquote>
+      <xblock>
+     <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so layui-form-pane" style="margin-bottom: 0px;">
+          <input class="layui-input" placeholder="模型名" id="goods_type_name" name="goods_type_name">
+          <button class="layui-btn" lay-submit="" id="submita" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
+          <span style="color: #999;margin-left: 10px; -webkit-user-select:none;user-select:none;">模型名只能是中文，字母，数字和_  组成</span>
+        </div>
+      </div>
+      </xblock>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th width="20px">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="50px">ID</th>
+            <th width="150px">模型名称</th>
+            <th width="150px">模型->规格数</th>
+            <th width="">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+
+      <?php
+      for($i = 0 ; $i < count($data) ; $i++){
+        echo '<tr>
+            <td>
+              <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id="'.$data[$i]["type_id"].'"><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>'.($i+1).'</td>
+            <td>
+            <input type="text" class="layui-input" style="height: 30px;" id="goods_update_name" name="goods_update_name" index="'.$data[$i]["type_id"].'" value="'.$data[$i]["type_name"].'"></td>
+            <td>123</td>
+            
+            <td class="td-manage">
+
+             <!-- 操作地区 -->
+              <a title="删除" onclick="attribute()" class="speclist_bj" href="javascript:;">
+                <i class="layui-icon">&#xe64e;</i>&nbsp;属性列表
+              </a>
+              <a title="编辑" onclick="speclist()" class="speclist_bj" href="javascript:;">
+                <i class="layui-icon">&#xe64e;</i>&nbsp;规格列表
+              </a>
+              <!-- 操作地区 -->
+
+
+            <!-- 操作地区 -->
+              <a title="删除" onclick="member_del(this,'.$data[$i]["type_id"].')" class="speclist_delete" href="javascript:;">
+                <i class="layui-icon">&#xe640;</i>&nbsp;删除
+              </a>
+              <!-- 操作地区 -->
+            </td>
+          </tr>';
+      }
+      ?>
+         
+        </tbody>
+      </table>
+
+
+
+      <div class="page">
+
+        <div>
+
+       <!--  规格 -->
+          <div class="layui-input-inline" style="height:20px;float: left;margin-left: 50px;">
+      <select name="goodstypelist" id="goodstypelist" style="height: 35px" lay-verify="required" onchange="showMsg(this)">
+        <option value="10" <?php if($page_list == 10){ echo 'selected="selected"';}?>>默认为10</option>
+        <option value="20" <?php if($page_list == 20){ echo 'selected="selected"';}?>>20</option>
+        <option value="50" <?php if($page_list == 50){ echo 'selected="selected"';}?>>50</option>
+        <option value="100" <?php if($page_list == 100){ echo 'selected="selected"';}?>>100</option>
+        <option value="300" <?php if($page_list == 300){ echo 'selected="selected"';}?>>300</option>
+      </select>
+            </div>
+<!--  规格 -->
+<!--  隐藏郁 -->
+<input type="hidden" class="page_hidden" value="{$a}">
+<input type="hidden" class="page_list_hidden" value="{$page_list}">
+<!--  隐藏郁 -->
+          <?php
+            if($page == 1){
+              echo '<span class="current">'.($page).'</span>';
+            }else{
+            if($a != 1){
+                echo '<a class="prev" href="goodstypelist?page='.($a-1).'&page_list='.$page_list.'">&lt;&lt;</a>';
+              }
+              if($page < 5){
+                 for($i = 1;$i<=$page;$i++){
+                     if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="goodstypelist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }
+              else if(($a-2) > 0 && $a != $page && ($a+2)<=$page){
+                  for($i = ($a-2);$i<=($a+2);$i++){
+                     if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="goodstypelist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }else if(($a-2) <= 0){
+                  for($i = 1;$i<=5;$i++){
+                   if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="goodstypelist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }else if($a == $page || ($a+2)>$page){
+                  for($i = ($page-4);$i<=$page;$i++){
+                   if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="goodstypelist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }
+
+              if($a != $page){
+                echo '<a class="next" href="goodstypelist?page='.($a+1).'&page_list='.$page_list.'">&gt;&gt;</a>';
+              }
+            }
+          ?>
+          <sapn style="margin-left: 10px;color: #999999;">共：{$page} 页</sapn>
+        </div>
+      </div>
+
+    </div>
+    <script>
+      layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+
+      });
+    function showMsg(obj) {
+        var opt = obj.options[obj.selectedIndex]  // 夺取选中的页数 opt.value
+        $('.goodstypelist').val(opt.value);
+        window.location.href = "goodstypelist?page="+$('.page_hidden').val()+"&page_list="+opt.value;
+    }
+
+      /*单个删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $.ajax({
+                  type : 'post',
+                  url : 'goodstypelist_delete',
+                  data : {'id':id},
+                  dataType : 'json',
+                  success:function(data){
+                    var data = jQuery.parseJSON(data);
+                    if (data['static'] == 1) {
+                      //失败
+                      layer.msg(data['message'],{icon:2,time:1000});
+                    }else{
+                      //成功
+                      $(obj).parents("tr").remove();
+                      layer.msg(data['message'],{icon:1,time:1000});}
+                  }
+              })
+          });
+      }
+
+      //商品属性
+      function attribute()
+      {
+        window.location.href = "attribute";
+      }
+      //商品规格
+      function speclist()
+      {
+         window.location.href = "speclist";
+      }
+    </script>
+  </body>
+
+</html>

@@ -1,0 +1,164 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">文章管理</a>
+        <a>
+          <cite>文章分类</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so layui-form-pane">
+          <input class="layui-input" placeholder="分类名称" style="width: 200px;" name="cate_name">
+          <button class="layui-btn" onclick="return false" lay-submit="" lay-filter="ac_sreach"><i class="layui-icon"></i>增加</button>
+        </form>
+      </div>
+      <blockquote class="layui-elem-quote">提示：<span style="color: #A4A4A4;">新增文章时，可选择文章分类。文章分类将在前台文章列表页显示
+系统文章分类不可以删除</span></blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$data|count} 条</span>
+      </xblock>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            <th width="20">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="5%">ID</th>
+            <th width="20%">分类名称</th>
+            <th width="28%">分类描述</th>
+            <th width="6%">排序</th>
+            <th width="6%">状态</th>
+            <th width="35%">操作</th>
+        </thead>
+        <tbody class="a-cate">
+
+      {volist name="data" id="cl"}
+
+        <tr >
+            <td>
+              <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'><i class='layui-icon'>&#xe605;</i></div>
+            </td>
+            <td>{$i}</td>
+            <td style='line-height: 30px'>
+              <input type='text' class='layui-input' style='width: 200px;float: left;height: 30px;' name='ac_con' data-name="ac_title" data-id="{$cl['ac_id']}" value='{$cl["ac_title"]}'>
+            </td>
+            <td>
+              <input type='text' class='layui-input' style='width: 90%;float: left;height: 30px;' name='ac_con' data-name="ac_con" data-id="{$cl['ac_id']}" value='{$cl["ac_con"]}'>
+            </td>
+            <td><input type='text' class='layui-input x-sort' name='ac_con' data-name="ac_order" data-id="{$cl['ac_id']}" name='ac_con' value='{$cl["ac_order"]}'></td>
+            <td>
+            <span>
+            <input type='checkbox' value="1" {if condition="$cl['ac_static'] == 1"}checked{/if} lay-text='开启|停用' lay-skin='switch' data-id="{$cl['ac_id']}" lay-filter="ac_static">
+            </span>
+            </td>
+            <td>
+              <button class='layui-btn-danger layui-btn layui-btn-xs' data-index="{$cl['is_sys']}" onclick='member_del(this,{$cl["ac_id"]})' href='javascript:;' ><i class='layui-icon' disabled="disabled">&#xe640;</i>删除</button>
+            </td>
+          </tr>
+
+          {/volist}
+
+
+        </tbody>
+      </table>
+    </div>
+    <script>
+      layui.use(['form'], function(){
+        form = layui.form;
+        form.on('switch(ac_static)', function(data){
+          var map = [];
+          map[0]= data.elem.checked == true ? 1:(data.elem.checked == false?0:"error");  //  第一个为值
+          map[1] = "ac_static";   // 第二个为字段名
+          map[2] = $(this).attr('data-id');   //  第三个位id
+          $.ajax({
+                type : 'post',
+                url  : '/admin/Article/ajaxCategoryUpdate',
+                data : {'data':JSON.stringify(map),'info':"update"},
+                dataType: 'json',
+                success:function(data){
+                  layer.msg(data['info']);
+                },
+                error:function(data){
+                  layer.msg("更新出错 :( ");
+                }
+            })
+        })
+        form.on('submit(ac_sreach)', function(data){
+          var map = [];
+          map[0]= data.field.cate_name;  //  第一个为值
+          $.ajax({
+                type : 'post',
+                url  : '/admin/Article/ajaxCategoryUpdate',
+                data : {'data':JSON.stringify(map),'info':"insert"},
+                dataType: 'json',
+                success:function(data){
+                  layer.msg(data['info']);
+                },
+                error:function(data){
+                  layer.msg("更新出错 :( ");
+                }
+            })
+        })
+    })
+
+      $('input[name="ac_con"]').each(function(){
+        var map = [];
+        $(this).change(function(){
+          map[0] = $(this).val();   //  第一个为值
+          map[1] = $(this).attr('data-name');   // 第二个为字段名
+          map[2] = $(this).attr('data-id');   //  第三个位id
+          $.ajax({
+                type : 'post',
+                url  : '/admin/Article/ajaxCategoryUpdate',
+                data : {'data':JSON.stringify(map),'info':"update"},
+                dataType: 'json',
+                success:function(data){
+                  layer.msg(data['info']);
+                },
+                error:function(data){
+                  layer.msg("更新出错 :( ");
+                }
+            })
+        })
+      })
+   
+      /*删除栏目*/
+      function member_del(obj,id){
+        if ($(obj).attr('data-index') == 1) {
+          layer.msg("系统公告不可删除 :(");
+          return false;
+        }
+      var map = [];
+          layer.confirm('确认要删除吗？',function(index){
+          map[0] = id;   //  第三个位id
+              //发异步删除数据
+              $.ajax({
+                type : 'post',
+                url  : '/admin/Article/ajaxCategoryUpdate',
+                data : {'data':JSON.stringify(map),'info':"dalete"},
+                dataType: 'json',
+                success:function(data){
+                    if (data['static'] == 0) {
+                        layer.msg(data['info']);
+                      }else{
+                        $(obj).parents("tr").remove();
+                        layer.msg(data['info'],{icon:1,time:1000});
+                      }
+                },
+                error:function(data){
+                  layer.msg("更新出错 :( ");
+                }
+            })
+          });
+      }
+    </script>
+  </body>
+
+</html>

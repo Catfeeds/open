@@ -1,0 +1,57 @@
+
+  <body>
+   <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：请务必正确填写商品信息</blockquote>
+  </body>
+<form id="hidden_attr" class="layui-form layui-col-md12 x-so layui-form-pane">
+          <table class="table_goods table_goods_center" style="border-collapse:separate; border-spacing:15px;">
+           <!--  1楼 -->
+        <tr>
+          <td><label>商品模型 </label></td>
+          <td>
+          <!--  123123 -->
+<div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+<select name="speclist_list" id="speclist_list" lay-filter="speclist_list">
+            <option value="">请选择分类&nbsp;&nbsp;&nbsp;&nbsp;</option>
+{volist name="speclist" id="spe"}
+          <option style="width: 200px;" onclick="Get_add_speclist({$spe['type_id']})" value='{$spe["type_id"]}' {if condition="$spe['type_id'] == $data['goods_type_id']"}selected="selected"{/if}>{$spe["type_name"]}</option>
+        {/volist}
+            </select>
+    </div>
+  </div>
+              </div>
+            </div>
+<!--  123123 -->
+          </td>
+        </tr>
+         <!--  2楼 -->
+         <tr>
+			<td><strong>商品规格:</strong></td>
+         </tr>
+          </table>
+
+          <div style="margin-top: 15px;">
+			<span style=" display: block;float: left;width: 700px;margin-left: 25px;">
+				<table class="speclist_nl_table">
+        {$html["html"]}
+					<!--  商品规格显示   -->
+					</table> 
+					<table class="speclist_mou_index" border= "1 "  id='spec_input_tab' style="width: 700px;">
+			</table>
+			</span>
+			<span style="float: left;">
+				<table class="attribute_index_mm">
+        {$html["html_attr"]}
+				</table>
+			</span>
+			<span>
+			</span>
+          </div>
+<div style="clear:both;"></div>
+  <input type="file" style="display: none;" accept="image/*" name="img" id="upload_speclist_img_odd">
+			<!--   显示项   -->
+      
+        </form>
+</html>

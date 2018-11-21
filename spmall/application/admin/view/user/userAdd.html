@@ -1,0 +1,35 @@
+{include file="public/header"}
+
+<div class="userAddIndexMin">
+<table class="layui-input">
+	<tr>
+		<td><span class="xx">*</span>会员昵称</td>
+		<td><input maxlength="20" type="text" class="layui-input userAddIndexname" lay-verify="required" required name=""></td>
+		<td class="tip">最多字符为20个</td>
+	</tr>
+	<tr>
+		<td><span class="xx">*</span>登录密码	</td>
+		<td><input maxlength="16" lay-verify="required" type="password" class="layui-input userAddIndexpw" required name=""></td>
+		<td class="tip">6-16位字母数字符号组合</td>
+	</tr>
+	<tr>
+		<td><span class="xx">*</span>手机号码</td>
+		<td><input type="text" maxlength="11" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" lay-verify="phone" class="layui-input userAddIndexiphone" ></td>
+		<td class="tip">前台登陆账号，手机邮箱任意一项都可以</td>
+	</tr>
+	<tr>
+		<td><span class="xx">*</span>邮件地址</td>
+		<td><input type="text" class="layui-input userAddIndexemail" name=""></td>
+		<td class="tip">前台登陆账号，手机邮箱任意一项都可以</td>
+	</tr>
+	<tr>
+		<td style="text-align: right;">QQ</td>
+		<td><input onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" type="text" lay-verify="number" class="layui-input userAddIndexqq" name=""></td>
+	</tr>
+</table>
+
+	<div class="userAddTableBtn">
+	<button onclick="userButton()" class="layui-btn">提交</button>
+	</div>
+	<br>
+</div>

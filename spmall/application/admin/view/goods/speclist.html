@@ -1,0 +1,267 @@
+{include file="public/header"}
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">商品管理</a>
+        <a>
+          <cite>规格列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：商品规格是购买商品时给用户选择的，涉及到价格变短库存等，例如：衣服的  颜色  尺寸  等</blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>&nbsp;批量删除</button>
+        <button class="layui-btn layui-btn-danger" style="background: #27a599;" onclick="speclist_add()"><i class="iconfont">&#xe6b9;</i>&nbsp;添加规格</button>
+        <span class="x-right" style="line-height:25px">
+        <!--  规格 -->
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <select name="speclist" class="speclist" lay-verify="required">
+        <option value="">选择模型</option>
+        {volist name="type" id="vo"}
+           <option value="{$vo}" <?php if($seacer == $vo){ echo 'selected="selected"';}?>>{$vo}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+<!--  规格 -->
+            <button class="layui-btn" style="margin-right: 20px;margin-left: 10px;" lay-submit="" id="seacer" lay-filter="sreach"><i class="iconfont">&#xe6ac;</i>&nbsp;搜索</button>
+        </span>
+      </xblock>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th width="20px">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>ID</th>
+            <th>规格名称</th>
+            <th>所属模型</th>
+            <th width="500px">规格项</th>
+            <th width="40px">检索</th>
+            <th width="40px">排序</th>
+            <th width="160px">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+
+      <?php
+      if($data != 'null'){
+        for($i = 0 ; $i < count($data) ; $i++){
+        echo '<tr>
+            <td>
+              <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id="'.$data[$i]["speclist_id"].'"><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>'.($i+1).'</td>
+            <td>'.$data[$i]["speclist_name"].'</td>
+            <td style="text-decoration:underline;">'.$data[$i]["type_name"].'</td>
+            <td>'.$data[$i]["item_count"].'</td>
+            <td class="search_index" style="cursor: pointer;">';
+            if($data[$i]["search_index"] == 1){
+            echo '<span class="search_index_value" style="color: #009688;font-weight: bold;" index="'.$data[$i]["speclist_id"].'" value="1"><i class="layui-icon">&#x1005;</i>&nbsp;是</span>';
+            }else{
+              echo '<span class="search_index_value" style="color: #999999;" index="'.$data[$i]["speclist_id"].'" value="0"><i class="layui-icon">&#x1007;</i>&nbsp;否</span>';
+            };
+            echo '</td>
+            <td><input type="text" class="layui-input x-sort" name="order" value="'.$data[$i] ["speclist_order"].'"></td>
+            
+            <td class="td-manage">
+              <a title="删除" onclick="member_del(this,'.$data[$i]["speclist_id"].')" class="speclist_delete" href="javascript:;">
+                <i class="layui-icon">&#xe640;</i>&nbsp;删除
+              </a>
+              <a title="编辑" onclick="speclist_edit('.$data[$i]["speclist_id"].')" class="speclist_bj" href="javascript:;">
+                <i class="layui-icon">&#xe642;</i>&nbsp;编辑
+              </a>
+            </td>
+          </tr>';
+      }
+      }
+      
+      ?>
+         
+        </tbody>
+      </table>
+
+
+
+      <div class="page">
+
+        <div>
+
+       <!--  规格 -->
+          <div class="layui-input-inline" style="height:20px;float: left;margin-left: 50px;">
+      <select name="page_list" id="page_list" style="height: 35px" lay-verify="required" onchange="showMsg(this)">
+        <option value="10" <?php if($page_list == 10){ echo 'selected="selected"';}?>>默认为10</option>
+        <option value="20" <?php if($page_list == 20){ echo 'selected="selected"';}?>>20</option>
+        <option value="50" <?php if($page_list == 50){ echo 'selected="selected"';}?>>50</option>
+        <option value="100" <?php if($page_list == 100){ echo 'selected="selected"';}?>>100</option>
+        <option value="300" <?php if($page_list == 300){ echo 'selected="selected"';}?>>300</option>
+      </select>
+            </div>
+<!--  规格 -->
+<!--  隐藏郁 -->
+<input type="hidden" class="page_hidden" value="{$a}">
+<input type="hidden" class="page_list_hidden" value="{$page_list}">
+<!--  隐藏郁 -->
+          <?php
+            if($page == 1){
+              echo '<span class="current">'.($page).'</span>';
+            }else{
+            if($a != 1){
+                echo '<a class="prev" href="speclist?page='.($a-1).'&page_list='.$page_list.'&seacer='.$seacer.'">&lt;&lt;</a>';
+              }
+              if($page < 5){
+                 for($i = 1;$i<=$page;$i++){
+                     if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="speclist?page='.$i.'&page_list='.$page_list.'&seacer='.$seacer.'">'.$i.'</a>';
+                      }
+                  }
+              }
+              else if(($a-2) > 0 && $a != $page && ($a+2)<=$page){
+                  for($i = ($a-2);$i<=($a+2);$i++){
+                     if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="speclist?page='.$i.'&page_list='.$page_list.'&seacer='.$seacer.'">'.$i.'</a>';
+                      }
+                  }
+              }else if(($a-2) <= 0){
+                  for($i = 1;$i<=5;$i++){
+                   if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="speclist?page='.$i.'&page_list='.$page_list.'&seacer='.$seacer.'">'.$i.'</a>';
+                      }
+                  }
+              }else if($a == $page || ($a+2)>$page){
+                  for($i = ($page-4);$i<=$page;$i++){
+                   if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="speclist?page='.$i.'&page_list='.$page_list.'&seacer='.$seacer.'">'.$i.'</a>';
+                      }
+                  }
+              }
+
+              if($a != $page){
+                echo '<a class="next" href="speclist?page='.($a+1).'&page_list='.$page_list.'&seacer='.$seacer.'">&gt;&gt;</a>';
+              }
+            }
+          ?>
+          <sapn style="margin-left: 10px;color: #999999;">共：{$page} 页</sapn>
+        </div>
+      </div>
+
+    </div>
+    <script>
+      layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+
+
+    function showMsg(obj) {
+        var opt = obj.options[obj.selectedIndex]  // 夺取选中的页数 opt.value
+        $('.page_list').val(opt.value);
+        window.location.href = "speclist?page="+$('.page_hidden').val()+"&page_list="+opt.value+"&seacer="+$('.speclist').val();
+    }
+      function speclist_add()
+      {
+         x_admin_show('添加规格',"{:url('goods/speclist_add')}",500,530);
+      }
+
+      function speclist_edit(id){
+        x_admin_show('编辑规格',"{:url('goods/speclist_edit')}?name="+id,500,530);
+      }
+
+      /*单个删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $.ajax({
+                  type : 'post',
+                  url : '/admin/Goods/speclist_delete',
+                  data : {'id':id,'type':'2'},
+                  dataType : 'json',
+                  success:function(data){
+                    var data = jQuery.parseJSON(data);
+                    if (data['static'] == 1) {
+                      $(obj).parents("tr").remove();
+                      layer.msg('已删除!',{icon:1,time:1000});}
+                  }
+              })
+          });
+      }
+
+      // 多个删除
+      function delAll (argument) {
+        var data = tableCheck.getData();
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            $.ajax({
+                  type : 'post',
+                  url : '/admin/Goods/speclist_delete',
+                  data : {'id':JSON.stringify(data),'type':'1'},
+                  dataType : 'json',
+                  async:false,
+                  success:function(data){
+                    var data = jQuery.parseJSON(data);
+                    if (data['static'] == 1) {
+                        layer.msg('删除成功', {icon: 1});
+                       $(".layui-form-checked").not('.header').parents('tr').remove();
+                   }
+                  }
+              })
+        });
+      }
+    </script>
+  </body>
+
+</html>

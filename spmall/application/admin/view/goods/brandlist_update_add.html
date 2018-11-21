@@ -1,0 +1,240 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+          <div class="layui-form-item">
+              <label for="L_name" class="layui-form-label">
+                  <span class="x-red">*</span>品牌名称
+              </label>
+              <div class="layui-input-inline" style="width: 360px;">
+                  <input type="text" id="L_name" value="{$data['brand_name']}" disabled="" name="L_name" 
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <input type="hidden" name="name_hideen" class="name_hideen" value="{$data['brand_id']}">
+          <div class="layui-form-item">
+              <label for="L_name" class="layui-form-label">
+                  品牌网址
+              </label>
+              <div class="layui-input-inline" style="width: 360px;">
+                  <input type="text" id="L_url" name="L_url" 
+                  autocomplete="off" value="{$data['brand_url']}" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="x-red">* </span> 要以http://
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="L_type" class="layui-form-label">
+                  <span class="x-red">*</span>所属分类
+              </label>
+ <!--  规格one -->
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin: 0px;">
+      <select name="one" class="one" lay-verify="required" lay-filter="one">
+        <option value="">选择分类</option>
+        {volist name="catelist_one" id="one"}
+          <option value="{$one['parent_id_path']}" {if condition="$one['cate_id'] == $onea"} selected="selected" {/if}>{$one['cate_name']}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+<!--  规格one -->
+<!--  规格two -->
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin: 0px;">
+      <select name="two" class="two" lay-verify="required" lay-filter="two">
+        <option value="">选择分类</option>
+        {volist name="catelist_two" id="two"}
+          <option value="{$two['parent_id_path']}" {if condition="$two['cate_id'] == $twoa"} selected="selected" {/if} >{$two['cate_name']}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+<!--  规格two -->
+          </div>
+
+
+<!--  品牌logo   -->
+<div class="layui-form-item">
+              <label for="L_name" class="layui-form-label">
+                  品牌logo
+              </label>
+              <div class="layui-input-inline" style="width: 360px;">
+                  <input type="text" id="logo" value="{$data['brand_logo']}" name="logo" disabled style="width: 240px; 
+    float: left;
+    margin-right: 7px;" 
+                  autocomplete="off" class="layui-input">
+                  <button type="button" class="layui-btn" id="test1" style="float: left;">
+  <i class="layui-icon">&#xe67c;</i>上传图片
+</button>
+              </div>
+          </div>
+<!--  品牌logo   -->
+
+<!--  排序   -->
+<div class="layui-form-item">
+              <label for="L_name" class="layui-form-label">
+                  排序
+              </label>
+              <div class="layui-input-inline" style="width: 360px;">
+                  <input type="text" id="L_order" name="L_order" value="{$data['brand_sort']}" 
+                  autocomplete="off" class="layui-input">
+              </div>
+
+          </div>
+<!--  排序   -->
+
+<!--  品牌描述   -->
+<div class="layui-form-item">
+              <label for="L_textarea" class="layui-form-label">
+                  品牌描述
+              </label>
+              <div class="layui-input-inline" style="width: 360px;">
+                  <textarea id="L_textarea" name="L_textarea" class="layui-input" style="height: 86px;">{$data['brand_desc']}</textarea>
+              </div>
+          </div>
+<!--  品牌描述   -->
+
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button class="layui-btn" lay-filter="add" lay-submit="">
+                  添加  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+
+        layui.use(['form','layer','upload'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer
+          ,upload = layui.upload;
+
+
+  var uploadInst = upload.render({
+    elem: '#test1' //绑定元素
+    ,url: 'brandlist_sc_img' //上传接口
+    ,accept: 'images' //允许上传的文件类型
+    ,size: 1024 //最大允许上传的文件大小
+    ,done: function(res){
+      //上传完毕回调
+      if (res['code'] == 1) {
+        $('#logo').val(res['msg']);
+      }else{
+        alert(res['msg']);
+      }
+    }
+    ,error: function(){
+      //请求异常回调
+    }
+  });
+
+          //刷新页面
+function repla()
+      {
+        parent.location.reload();
+      }
+
+/** ------------------------------------------------------------------------- */
+
+          /**   分类所需   */
+
+            form.on('select(one)', function(data){
+                /**-  异步传输获取子  - **/
+                if (data.value =='') {
+                        $('.two').html('');
+                         form.render('select');
+                      $(".two").get(0).selectedIndex=0;
+                }else{
+                  $.ajax({
+                    type : 'post',
+                    url : 'brandlist_sx',
+                    data : {data:data.value},
+                    dataType : 'json',
+                    success:function(data)
+                    {
+                      $('.two').html('');
+                      for (var i = 0; i < data.length; i++) {
+                        var option = "<option value='"+data[i]['cate_id']+"'>"+data[i]['cate_name']+"</option>";
+                       $(".two").append(option);
+                      }
+                         form.render('select');
+                      $(".two").get(0).selectedIndex=0;
+                    },
+                    error:function(data)
+                    {
+                      alert("选择出错");
+                    },
+                })
+                }
+                
+            })
+/** ------------------------------------------------------------------------- */
+
+          //监听提交
+          form.on('submit(add)', function(data){
+            var datalist = jQuery.parseJSON(JSON.stringify(data.field));
+            if (datalist['L_name'] == '' ) {
+                layer.msg('带星号的必填',function(){});
+            }
+            //检查是否数字 
+           var a = datalist['L_order'];
+
+
+if (datalist['L_order'] != '') {
+              if(isNaN(datalist['L_order'])){
+                     layer.msg('你输入的排序无效',function(){});
+                     $('#L_order').val('');
+                  return false;
+                }
+            }
+
+            if (datalist['L_url'] != '') {
+              str = datalist['L_url'].match(/^http:\/\/.+\..+/i);
+              if (str == null){
+                layer.msg('你输入的URL无效',function(){});
+                  return false;
+              }
+            }
+            //发异步，把数据提交给php
+            $.ajax({
+              data : 'get',
+              url : 'brandlist_update',
+              data : {'data':JSON.stringify(data.field),type:'list',index:$('.name_hideen').val()},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                var data = jQuery.parseJSON(data);
+                if (data['static'] == 0) {
+                   layer.msg(data['message'], {icon: 5},function () {});
+                }else{
+                      layer.alert(data['message'], {icon: 6},function () {
+                      // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);
+                  });
+                }
+              },
+            })
+            return false;
+          });
+          
+          
+        });
+    </script>
+  </body>
+
+</html>

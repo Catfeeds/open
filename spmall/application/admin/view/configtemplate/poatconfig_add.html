@@ -1,0 +1,186 @@
+{include file="public/header"}
+  <style type="text/css">
+    .layui-form-item label{
+      width: 100px;
+    }
+    .layui-form-item input{
+      width: 280px;
+    }
+    .layui-form-item textarea{
+      width: 280px;
+    }
+    .layui-select-title input{
+      width: 190px;
+    }
+  </style>
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form" id="sdfromsubmit" action="javascrippt:void(0)">
+          <div class="layui-form-item">
+              <label for="fri_name" class="layui-form-label">
+                  <span class="x-red">*</span>运费模板名称
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" name="supp_name" required="required"
+                  autocomplete="off" value="{$data['template_name']}" class="layui-input">
+                  <input type="hidden" name="hiddenId" value="{$data['template_id']}">
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="supp_line" class="layui-form-label">
+                  <span class="x-red">*</span>计价方式
+              </label>
+              <div class="layui-input-inline" style="width: 290px;">
+                  <input type="radio" lay-filter="VM" required="required" name="VM" {if condition="($data['type'] == 0) & ($data != null)"}checked{/if} value="number" title="件数">
+                  <input type="radio" lay-filter="VM" required="required" name="VM" {if condition="$data['type'] == 1"}checked{/if} value="weight" title="重量">
+                  <input type="radio" lay-filter="VM" required="required" name="VM" {if condition="$data['type'] == 2"}checked{/if} value="volume" title="体积">
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="supp_iphone" class="layui-form-label">
+                  <span class="x-red">*</span>默认配送配置
+              </label>
+              <div class="layui-input-inline" style="width: 290px;">
+                  <input type="radio" lay-filter="TC" name="TC" {if condition="$data['is_enable_default'] == 0"}checked{/if} value="false" title="否">
+                  <input type="radio" lay-filter="TC" name="TC" {if condition="$data['is_enable_default'] == 1"}checked{/if} value="true" title="是">
+              </div>
+          </div>
+        <div id="addTitleTable">
+        
+    <!--  更新  -->
+         <?php
+            if($HtmlText != null){
+              echo $HtmlText;
+            }
+         ?>
+    <!-- 更新  -->
+        </div>
+          <br>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" id="submit_add_tj" lay-submit="submit">
+                  添加  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+    function clickTextCity(obj){
+      var linetxt = '<div class="opentext"><div class="listAddcheackBox"><ul id="listAddcheackBoxli"></ul></div><div style="clear: both;"></div><div id="listxialak"><select onchange="get_city(this,this.value,1)" multiple="multiple" class="listxialak onecity" name="onecity"><option value="0">请选择省份</option>{volist name="china" id="vochina"}<option value="{$vochina.Id}">{$vochina.Name}</option>{/volist}</select><select class="listxialak twocity" onchange="get_city(this,this.value,2)" multiple="multiple" name="twocity"></select> <select class="listxialak thrcity" multiple="multiple thrcity" name="thrcity"></select> </div><div style="text-align: center;" class="layui-layer-btn layui-layer-btn-"><span class="buttonadd_tj_mm_mo" onclick="buttonadd_tj_mm_mo()">添加</span></div></div><br>';
+
+layer.open({
+  type: 1, 
+  title: ['选择地区', 'font-size:18px;'],
+  area: ['500px', '400px'],
+  btn: ['确定'],
+  content: linetxt //这里content是一个普通的String
+  ,yes: function(index, layero){
+
+  var valArrId  = new Array();
+  var valArrHt  = new Array();
+  $('input[name="area_list[]"]').each(function(i){
+    if ($(this).attr('checked') == "checked") {
+      valArrId[i] = $(this).val();
+      valArrHt[i] = $(this).attr('data-name');
+     }
+    })
+      var privId = valArrId.join(',');
+      var privHt = valArrHt.join(',');
+      $(obj).val(privHt);
+     $(obj).next().attr('value',privId);
+      layer.close(index);
+   }
+      });
+    }
+
+
+
+var addtexta = '<tr class="momomom"><th style="width: 8%;"></th><th style="width: 20%;" abbr="article_title" axis="col3" class="" align="left"><div style="text-align: center; width: 90%;" class="pdszfh"><input type="text" name="area_id[]" onclick="clickTextCity(this)"/><input type="hidden" name="area_hide_id[]" /></div></th><th style="width: 15%;" abbr="ac_id" axis="col4" class="" align="left"><div style="text-align: center; width: 90%;" class="pdszfh"><input onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" type="text" name="first_unit[]"/></div></th><th style="width: 15%;" abbr="ac_id" axis="col4" class="" align="left"><div style="text-align: center; width: 90%;" class="pdszfh"><input type="text" onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" name="first_money[]"/></div></th><th style="width: 15%;" abbr="article_show" axis="col5" class="" align="center"><div style="text-align: center; width: 90%;" class="pdszfh"><input type="text" onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" name="continue_unit[]"/></div></th><th style="width: 15%;" abbr="article_time" axis="col6" class="" align="center"><div style="text-align: center; width: 100%;" class=""><input type="text" onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" name="continue_money[]" /></div></th><th style="width: 10%;" abbr="article_time" axis="col6" class="" align="center"><div style="text-align: center; width: 100%;" class=""><span class="deleteAdd" onclick="deleteAdd(this)">删除</span></div></th></tr>';
+var addtextamrpz = '<tr class="momomom mrpzdq"><th style="width: 8%;">默认配置</th><th style="width: 20%;" abbr="article_title" axis="col3" class="" align="left"><div style="text-align: center; width: 90%;" class="pdszfh"><input type="text" name="area_id[]" value="中国" readonly/><input name="area_hide_id[]" value="100000" type="hidden"></div></th><th style="width: 17%;" abbr="ac_id" axis="col4" class="" align="left"><div style="text-align: center; width: 90%;" class="90"><input onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" type="text" name="first_unit[]"/></div></th><th style="width: 17%;" abbr="ac_id" axis="col4" class="" align="left"><div style="text-align: center; width: 90%;" class="pdszfh"><input type="text" onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" name="first_money[]"/></div></th><th style="width: 17%;" abbr="article_show" axis="col5" class="" align="center"><div style="text-align: center; width: 90%;" class="pdszfh"><input type="text" onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" name="continue_unit[]"/></div></th><th style="width: 17%;" abbr="article_time" axis="col6" class="" align="center"><div style="text-align: center; width: 100%;" class=""><input type="text" onkeyup="this.value=this.value.replace(/[^\\d.]/g,\'\')" name="continue_money[]" /></div></th><th style="width: 10%;" abbr="article_time" axis="col6" class="" align="center"><div style="text-align: center; width: 100%;" class=""></div></th></tr>';
+    function addtext(){
+  $("#addTitle").append(addtexta);
+}
+ layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+          //刷新页面
+function repla()
+      {
+        parent.location.reload();
+      }
+ 
+      form.on('radio(TC)', function(data){
+          if (data.value == "true") {
+            $('#addTitle').prepend(addtextamrpz);
+          }else{
+            $('#addTitle').children('tbody').children('tr').remove('.mrpzdq');
+          }
+      }); 
+
+      form.on('radio(VM)',function(data){
+        $textth = '';
+        switch(data.value){
+          case('number'):
+            $textth = "件数(件)";
+            break;
+          case('weight'):
+            $textth = "重量(克)";
+            break;
+          case('volume'):
+            $textth = "体积(立方米)";
+            break;
+        }
+        var title = '<div class="flexigrid" style="width: 98%;"><div class="mDiv"><div class="ftitle"><span onclick="addtext()" id="addText" style="height: 28px;line-height: 28px;padding: 0px 12px;color: #009688;background: white;border: 1px solid #009688;border-radius: 7px;" class="layui-btn"><i  class="layui-icon"">&#xe654;</i>新增区域</span></div><span class="dqxxxstj"></span></div><div class="hDiv"><div class="hDivBox"><table id="addTitle" cellspacing="0" style="width: 98%;" cellpadding="0"><thead><tr><th style="width: 8%;"></th><th align="left" style="width: 20%;" abbr="article_title" axis="col3" class=""><div style="text-align: center; width: 100%;" class="">配送区域</div></th><th align="left" style="width: 15%;" abbr="ac_id" axis="col4" class=""><div style="text-align: center; width: 100%;" class="">首'+$textth+'</div></th><th align="left" style="width: 15%;" abbr="ac_id" axis="col4" class=""><div style="text-align: center; width: 100%;" class="">运费(元)</div></th><th align="center" style="width: 15%;" abbr="article_show" axis="col5" class=""><div style="text-align: center; width: 100%;" class="">续'+$textth+'</div></th><th align="center" style="width: 15%;" abbr="article_time" axis="col6" class=""><div style="text-align: center; width: 100%;" class="">运费(元)</div></th><th align="center" style="width: 10%;" abbr="article_time" axis="col6" class=""><div style="text-align: center; width: 100%;" class="">操作</div></th></tr></thead></table></div></div></div>';
+        if (!$("#addTitleTable").html() == "") {
+          layer.confirm('重新选择计价方式会使运费信息清空，确定继续吗', {
+      btn: ['确定', '取消'] 
+    }, function(index, layero){
+      $("#addTitleTable").html("");
+      $("#addTitleTable").append(title);
+      layer.close(index);
+        }, function(index){
+          return false;
+        });
+        }else{    
+          $("#addTitleTable").append(title);
+        }
+      })
+
+          //监听提交
+          $('#submit_add_tj').click(function(){
+            var id = $('input[name="hiddenId"]').val();
+            $.ajax({
+              type : 'POST',
+              url : '/admin/Configtemplate/poatconfigsave',
+              data : {'data':$('#sdfromsubmit').serialize(),'Id':id},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                if (data.info == 0) {
+                  $('.dqxxxstj').html(data.data);
+                  setTimeout(function(){
+                      $('.dqxxxstj').html("");
+                    },3000);
+                }else{
+                  layer.msg(data.data, {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),1000);
+                    });
+                  }
+              },
+              error:function(){
+                layer.msg("请求出错，请检查是否网络问题！！！");
+              }
+            })
+            return false;
+          });
+
+        });
+    </script>
+  </body>
+
+</html>

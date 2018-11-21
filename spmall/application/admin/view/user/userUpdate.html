@@ -1,0 +1,148 @@
+{include file="public/header"}
+<body>
+<br>
+<form class="layui-form" action="">
+<input type="hidden" name="user_id" value="{$data['user_id']}">
+  <div class="layui-form-item">
+    <label class="layui-form-label">会员昵称</label>
+    <div class="layui-input-block">
+      <input type="text" name="user_nick" required  lay-verify="required" style="float: left;" placeholder="请输入会员名" autocomplete="off" disabled="disabled" value="{$data['user_nick']}" class="layui-input">
+    <div class="layui-form-mid layui-word-aux">&nbsp;&nbsp;会员昵称不可修改。</div>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">会员资产</label>
+    <div class="layui-input-block">
+      
+   <span style="height:38px;width: ;display: block;line-height: 38px;">&nbsp;&nbsp;<span style="color:red;font-weight: bold;">{$data['user_money']}&nbsp;&nbsp;</span>金额&nbsp;&nbsp;<span style="color:red;font-weight: bold;">{$data['user_pay_points']}&nbsp;&nbsp;</span>积分</span> 
+
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">会员等级</label>
+    <div class="layui-input-block" style="width: 190px;margin-left: 130px;">
+      <select name="user_lever" lay-verify="required" style="width: 180px;">
+        <option value=""></option>
+        {volist name="lever" id="le"}
+			<option value="{$le['lever_grade']}" {if condition="$le['lever_grade'] == $data['user_lever']"}selected="selected"{/if}>{$le['lever_name']}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">电子邮箱</label>
+    <div class="layui-input-block">
+      <input type="text" name="user_email" style="float: left;" value="{$data['user_email']}" placeholder="请输入电子邮箱" autocomplete="off" class="layui-input"><span style="height:38px;display: block;line-height: 38px;color:#999!important;">&nbsp;&nbsp;用来找回密码、接受订单通知等。</span>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">手机号码</label>
+    <div class="layui-input-block">
+      <input type="text" name="user_mobile" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" maxlength="11" style="float: left;" value="{$data['user_mobile']}" placeholder="请输入手机号码" autocomplete="off" class="layui-input"><span style="height:38px;display: block;line-height: 38px;color:#999!important;">&nbsp;&nbsp;用来找回密码、接受订单通知等。</span>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">新密码</label>
+    <div class="layui-input-block">
+      <input type="text" name="user_password" maxlength="16"  style="float: left;" placeholder="请输入新密码" autocomplete="off" class="layui-input"><span style="height:38px;display: block;line-height: 38px;color:#999!important;">&nbsp;&nbsp;为空则不修改密码</span>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">确认密码</label>
+    <div class="layui-input-block">
+      <input type="text" name="user_password_on" maxlength="16"  style="float: left;" placeholder="确认密码" autocomplete="off" class="layui-input"><span style="height:38px;display: block;line-height: 38px;color:#999!important;">&nbsp;&nbsp;6-16位字母数字符号组合</span>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">性别</label>
+    <div class="layui-input-block">
+      <input type="radio" name="user_sex" value="2" {if condition="2 == $data['user_sex']"}checked="checked"{/if} title="保密">
+      <input type="radio" name="user_sex" value="0" {if condition="0 == $data['user_sex']"}checked="checked"{/if} title="男">
+      <input type="radio" name="user_sex" value="1" {if condition="1 == $data['user_sex']"}checked="checked"{/if} title="女">
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">QQ</label>
+    <div class="layui-input-block">
+      <input type="text" name="user_qq" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" maxlength="11" required lay-verify="required" style="float: left;" value="{$data['user_qq']}" placeholder="请输入QQ" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">注册时间</label>
+    <div class="layui-input-block">
+   <span style="height:38px;display: block;line-height: 38px;color:red;">&nbsp;&nbsp;{$data['user_reg_time']|date="Y-m-d",###}</span>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">冻结会员</label>
+    <div class="layui-input-block">
+      <input type="checkbox" style="float: left;" {if condition="0 == $data['user_is_lock']"}checked="checked"{/if} name="user_is_lock" lay-skin="switch" lay-text="开启|关闭"><span style="color: #999;">&nbsp;&nbsp;如果冻结会员，会员将不能操作资金。</span>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+    </div>
+  </div>
+</form>
+ 
+<script>
+//Demo
+layui.use('form', function(){
+  var form = layui.form;
+
+
+  //监听提交
+  form.on('submit(formDemo)', function(data){
+
+var d = data.field;
+var emreg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+var ipreg = /^1[3|4|5|8][0-9]\d{8}$/;
+	if (d['user_mobile'] != '' || d['user_mobile'] != null) {
+		if (!ipreg.test(d['user_mobile'])) {
+        layer.msg("手机不符合规则，请重新输入");
+        return false;
+      }
+	}
+
+	if (d['user_email'] != '' && d['user_email'] != null && d['user_email'].length != 0) {
+		if (!emreg.test(d['user_email'])) {
+        layer.msg("邮箱不符合规则，请重新输入");
+        return false;
+      }
+	}
+
+	if (d['user_password'] != '' && d['user_password'].length != 0) {
+		if (d['user_password'] != d['user_password_on']) {
+			layer.msg("两次密码要一致");
+			return false;
+		}
+	}
+
+    $.ajax({
+    		type : 'POST',
+    		url  : '/admin/User/ajaxUserAUD',
+    		data : {'data':JSON.stringify(data.field),'info':"update"},
+    		dataType : 'json',
+    		success:function(data){
+          		if (data['status'] == 0) {
+                   layer.msg(data['info'], {icon: 5},function () {});
+                }else{
+                   layer.msg(data['info'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+        },
+        error:function(data){
+          layer.msg(data['responseText']);
+        },
+    })
+    return false;
+  });
+});
+</script>
+</body>
+</html>

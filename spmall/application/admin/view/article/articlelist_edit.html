@@ -1,0 +1,172 @@
+{include file="public/header"}
+<!--  文本剪辑器   -->
+<script type="text/javascript" charset="utf-8" src="__STATIC_admin__/public/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="__STATIC_admin__/public/ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="__STATIC_admin__/public/ueditor/lang/zh-cn/zh-cn.js"></script>
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+          <div class="layui-form-item">
+              <label for="al_title" class="layui-form-label">
+                  <span class="x-red">*</span>标题
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" value="{$list['al_title']}" lay-verify="required" name="al_title" required=""
+                  autocomplete="off" class="layui-input" style="width: 380px;">
+              </div>
+          </div>
+
+            <div class="layui-form-item">
+                    <label for="ac_id" class="layui-form-label">
+                        <span class="x-red">*</span>所属分类
+                    </label>
+                    <!--  规格 -->
+                <div class="layui-input-inline" style="height:35px">
+                    <div class="layui-form" action="">
+                        <div class="layui-form-item">
+          <div class="layui-input-block" style="margin: 0px;">
+            <select name="ac_id" style="width:190px;" class="supplires_admin" lay-verify="required">
+              <option value="">选择分类</option>
+        {volist name="artclass" id="ac"}
+          <option value="{$ac['ac_id']}" {if condition="$ac['ac_id'] == $list['ac_id']"}selected="selected"{/if}>{$ac['ac_title']}</option>
+        {/volist}
+            </select>
+          </div>
+        </div>
+                    </div>
+                  </div>
+      <!--  规格 -->
+                </div>
+          <div class="layui-form-item">
+              <label for="seo" class="layui-form-label">
+                  seo关键字
+              </label>
+              <div class="layui-input-inline" style="width: 380px;">
+                  <input type="text" value="{$list['seo']}" style="width: 380px;" lay-verify="" name="seo" class="layui-input">
+              </div>
+               <div class="layui-form-mid layui-word-aux" style="margin-left: 10px;">
+                  <span class="x-red">用于seo 搜索引擎友好</span>
+              </div>
+          </div>
+          <br>
+
+          <div class="layui-form-item">
+              <label for="al_link" class="layui-form-label">
+                  链接
+              </label>
+              <div class="layui-input-inline" style="width: 380px;">
+                   <input type="text" value="{$list['al_link']}" style="width: 380px;" lay-verify="al_link" name="al_link" class="layui-input">
+              </div>
+               <div style="margin-left: 10px;">
+                  <span class="x-red">*   
+当填写"链接"后点击文章标题将直接跳转至链接地址，<br>不显示文章内容。链接格式请以http://,https://开头</span>
+              </div>
+          </div>
+          <br>
+
+          <div class="layui-form-item">
+              <label for="al_time" class="layui-form-label">
+                  发布时间
+              </label>
+              <div class="layui-input-inline">
+                   <input type="text" style="width: 380px;" value="{$list['al_time']}" lay-verify="al_time" name="al_time" id="al_time" class="layui-input">
+              </div>
+          </div>
+
+
+          <div class="layui-form-item">
+              <label for="al_static" class="layui-form-label">
+                  显示
+              </label>
+              <div class="layui-input-inline" style="line-height: 42px;">
+                <input type="checkbox" value="1" {if condition="$list['al_static'] == 1"}checked{/if} name="al_static" lay-skin="switch" lay-text="开启|关闭">
+              </div>
+          </div>
+          <br>
+
+           <div class="layui-form-item">
+              <label for="al_ms" class="layui-form-label">
+                  网页描述
+              </label>
+              <div class="layui-input-inline">
+                  <textarea name="textarea" id="al_ms" placeholder="" class="layui-textarea" style="width: 380px;">{$list['textarea']}</textarea>
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="al_ms" class="layui-form-label">
+                <span class="x-red">*</span>文章内容
+              </label>
+             <div style="margin-left: 130px;"><script id="editor" type="text/plain" style="width:900px;height:500px;z-index: 998;">{$list['editorValue']}</script></div>
+          </div>
+        
+
+
+
+          <div class="layui-form-item">
+              <label for="al_addrepass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="al_addrepass" lay-submit="">
+                  添加  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+
+//实例化文本域
+var ue = UE.getEditor('editor');
+  
+
+        layui.use(['form','layer','laydate'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer
+          ,laydate = layui.laydate;
+
+            //执行一个laydate实例
+          laydate.render({
+            elem: '#al_time' //指定元素
+          });
+
+          //监听提交
+          form.on('submit(al_addrepass)', function(data){
+            var connt = $('form').serializeArray();
+            var d = {};
+            $.each(connt, function() {
+              d[this.name] = this.value;
+            });
+            if (d['editorValue'] == '') {
+              layer.msg("文章内容必须填 :)");
+              return false;
+            }
+            //发异步，把数据提交给php
+            $.ajax({
+              type : 'post',
+              url : '/admin/Article/articlelist_insert',
+              data : {'data':JSON.stringify(d),'info':'insert','id':{$id}},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                if (data['data'] == 0) {
+                   layer.msg(data['info'], {icon: 5},function () {});
+                }else{
+                   layer.msg(data['info'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+              },
+              error:function(){
+                layer.msg("请求出错，请检查是否网络问题！！！");
+              }
+            })
+            return false;
+          });
+          
+          
+        });
+    </script>
+  </body>
+
+</html>

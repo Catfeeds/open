@@ -1,0 +1,185 @@
+{include file="public/header"}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">配置管理</a>
+        <a>
+          <cite>供应商管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：供应商管理，由平台设置管理</blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" style="background: #27a599;"  onclick="member_add('one')"><i class="iconfont">&#xe6b9;</i>&nbsp;添加供应商</button>
+
+      </xblock>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>供应商名称</th>
+            <th>供应商描述</th>
+            <th>供应商联系人</th>
+            <th>供应商联系电话</th>
+            <th>所属管理员</th>
+            <th>状态</th>
+            <th width="160px">操作</th>
+            </tr>
+            <?php
+          for($i = 0 ; $i < count($data) ; $i++){
+          echo "<tr>";
+            echo "<th>".($i+1)."</th>";
+            echo "<th>".$data[$i]["suppliers_name"]."</th>";
+            echo "<th>".$data[$i]["suppliers_desc"]."</th>";
+            echo "<th>".$data[$i]["suppliers_catacts"]."</th>";
+            echo "<th>".$data[$i]["suppliers_phone"]."</th>";
+            echo "<th>admin</th>";
+            if($data[$i]["is_check"] == 0){
+              echo '<th onclick="member_cur(this,'.$data[$i]["suppliers_id"].')"><span style="color: #1BBC9D;
+cursor: pointer;" data-type="1"><i class="layui-icon">&#x1005;</i>是</span></th>';
+            }else{
+            echo '<th onclick="member_cur(this,'.$data[$i]["suppliers_id"].')"><span style="color: #9ea3a7;
+cursor: pointer;" data-type="0"><i class="layui-icon">&#x1007;</i>否</span></th>';
+            }
+            echo '<th width="160px">
+                <span onclick="member_add('.$data[$i]["suppliers_id"].')" data-id="'.$data[$i]["suppliers_id"].'" class="speclist_bj">编辑</span>
+                <span onclick="member_del(this,'.$data[$i]["suppliers_id"].')" data-id="'.$data[$i]["suppliers_id"].'" class="speclist_delete">删除</span>
+            </th>';
+            echo "</tr>";
+          }
+            ?>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+<div style="text-align:center;" id="test1"></div>
+    </div>
+    <script>
+
+// var pcountInt = $("#test1").attr("data-num");
+var pcountInt = parseInt({$datanum}) ; //总数据
+var psizeInt= {$psizeIntablet}; //页面大小
+var pindex = {$pindex} ; //当前页
+var ptotalpages=Math.ceil(pcountInt/psizeInt);// 总记录数
+
+layui.use('laypage', function(){
+  var laypage = layui.laypage;
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+    ,count: pcountInt //数据总数，从服务端得到
+    ,limit:psizeInt
+    ,layout: ['limit', 'prev', 'page', 'next']
+    ,limits: [10, 20, 30, 100]
+    ,pages: ptotalpages //总页数
+    ,curr: pindex
+    ,jump: function (obj,first) {
+      if (!first) {
+   // var parId=$("#parId").val();
+   var pindex=obj.curr;
+   window.location.href="/admin/Configtemplate/supplierconfig?psizeInt="+obj.limit+"&pindex="+pindex;//跳转链接
+               }
+       }
+  });
+});
+
+
+  // 添加 、 修改 供应商
+      function member_add(id){
+        x_admin_show('添加供应商',"{:url('Configtemplate/supplierconfigadd')}?id="+id,500,550);
+      }
+
+      function member_cur(obj ,id){
+        var yes = '<span data-type="1" style="color: #1BBC9D;cursor: pointer;" data-id='+id+'><i class="layui-icon">&#x1005;</i>是</span>';
+        var no = '<span data-type="0" style="color: #9ea3a7;cursor: pointer;" data-id='+id+'><i class="layui-icon">&#x1007;</i>否</span>';
+        var data = $(obj).children('span').attr("data-type")+"_"+id;
+        console.log(data);
+        $.ajax({
+            type : 'get',
+            url  : '/admin/Configtemplate/supplierconfigadd_insert',
+            data : {'data':JSON.stringify(data),'id':"_m_n"},
+            dataType : 'json',
+            success:function(data){
+        var data = jQuery.parseJSON(data);
+                if (data['core'] == 0) {
+                   layer.msg(data['message'], {icon: 5},function () {});
+              }else{
+                if ($(obj).children('span').attr("data-type") == 0) {
+                  $(obj).html(yes);
+                }else{
+                  $(obj).html(no);
+                }
+                  }
+            },
+            error:function(){
+              layer.msg("提交出错！！！");
+            }
+        })
+        
+      }
+      /*单个删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+            $.ajax({
+                  type : "get",
+                  url  : "/admin/Configtemplate/supplierconfigadd_delete",
+                  data : {'id':id},
+                  dataType : "json",
+                  success:function(data){
+                     var data = jQuery.parseJSON(data);
+                     if (data['core'] == 0) {
+                      $(obj).parents("tr").remove();
+                      layer.msg('删除失败!',{icon:2,time:1000});
+                     }else{
+                      $(obj).parents("tr").remove();
+                      layer.msg('已删除!',{icon:1,time:1000});
+                      }
+                  },
+                  error:function(){
+                    layer.msg("提交出错！！！");
+                  }
+            })
+          });
+      }
+
+
+    </script>
+  </body>
+
+</html>

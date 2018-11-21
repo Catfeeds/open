@@ -1,0 +1,250 @@
+<!--  文本剪辑器   -->
+<script type="text/javascript" charset="utf-8" src="__STATIC_admin__/public/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="__STATIC_admin__/public/ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="__STATIC_admin__/public/ueditor/lang/zh-cn/zh-cn.js"></script>
+<!--  文本剪辑器   -->
+  <body>
+   <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：请务必正确填写商品信息</blockquote>
+     <form class="layui-form layui-col-md12 x-so" id="box-form">
+      <table class="table_goods" style="border-collapse:separate; border-spacing:15px; margin-left: 100px;">
+      <!--  1楼 -->
+        <tr>
+          <td><label>商品名称 </label></td>
+          <td><input type="text" name="goods_name"  placeholder="商品名称" value="{$data.goods_name}" autocomplete="off" class="layui-input usernamea" style="width: 450px;margin-left: 20px;">
+          <span style="color: red;font-weight: bold;">*</span>必填</td>
+        </tr>
+        <!--  2楼 -->
+        <tr>
+          <td><label>商品简介 </label></td>
+          <td><input type="text" name="goods_remark"  placeholder="商品简介"  value="{$data.goods_remark}" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+        <!--  3楼 -->
+        <tr>
+          <td><label>商品货号 </label></td>
+          <td><input type="text" name="goods_sn" placeholder="商品货号"  value="<?php echo $data['goods_sn']?$data['goods_sn']:'gp_'.date('Ymd',time()).substr(time(),2) ;?>" disabled="" autocomplete="off" class="layui-input usernamec" style="width: 450px;margin-left: 20px;">
+          <span style="color: red;font-weight: bold;">*</span>自动生成</td>
+        </tr>
+        <!--  4楼 -->
+        <tr>
+          <td><label>SPU </label></td>
+          <td><input type="text" name="spu" placeholder="spu"  value="{$data.spu}" autocomplete="off"o nKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+        <!--  5楼 -->
+        <tr>
+          <td><label>SKU </label></td>
+          <td><input type="text" name="sku" value="{$data.sku}" placeholder="SKU" autocomplete="off" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+        <!--************************  6楼 ***************************************************-->
+        <tr>
+          <td><label>商品分类 </label></td>
+          <td>
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+<select name="goods_one" id="province"  lay-filter="one">
+            <option value="">请选择分类</option>
+{volist name="catelist_one" id="one"}
+          <option value='{$one["parent_id_path"]}' {if condition="$catt[0] == $one['parent_id_path']"}selected="selected"{/if} >{$one["cate_name"]}</option>
+        {/volist}
+            </select>
+    </div>
+  </div>
+              </div>
+            </div>
+
+
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+  <select name="goods_two" id="goods_two" lay-filter="two" ></select>
+    </div>
+  </div>
+              </div>
+            </div>
+
+
+
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+  <select name="goods_thr" id="goods_thr" lay-filter="thr">
+   </select>
+    </div>
+  </div>
+              </div>
+            </div>
+        <!--************************  6楼 ***************************************************-->
+<!--  选择商品分类 -->
+<span style="color: red;font-weight: bold;">*</span>必填
+          </td>
+        </tr>
+        <!--  7楼 -->
+        <tr>
+          <td><label>商品品牌 </label></td>
+          <td>
+            <!--  2  商品品牌 -->
+          <div class="layui-input-inline" style="height:35px;margin-left: 0px;">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+      <select name="brand" id="blank_ajax" class="speclist" lay-verify="required">
+        <option value="">选择商品品牌</option>
+        {volist name="brand" id="bra"}
+           <option value="{$bra.brand_id}" {if condition="$bra.brand_id == $data['brand_id']"}selected="selected"{/if}>{$bra.brand_name}</option>
+          {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+<!--  选择商品分类 -->
+          </td>
+        </tr>
+        <!--  8楼  suppliers_id-->
+        <tr>
+          <td><label>供应商 </label></td>
+          <td>
+           <!--  2  供应商模板 -->
+          <div class="layui-input-inline" style="height:35px;margin-left: 0px;">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+      <select name="suppliers_id" style="width: 210px;" id="suppliers_id" class="postage" lay-verify="postage">
+        <option value="0">属于本店商品</option>
+        {volist name="supp" id="suppdata"}
+          <option value="{$suppdata['suppliers_id']}">{$suppdata['suppliers_name']}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+            <!-- 供应商模板  -->
+          </td>
+        </tr>
+        <!--  9楼 -->
+        <tr>
+          <td><label>本店售价 </label></td>
+          <td><input type="text" name="shop_price" value="{$data.shop_price}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="本店售价" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"><span style="color: red;font-weight: bold;">*</span>必填</td>
+        </tr>
+        <!--  10楼 -->
+        <tr>
+          <td><label>市场价 </label></td>
+          <td><input type="text" name="market_price" value="{$data.market_price}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="市场价" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+        <!--  11楼 -->
+        <tr>
+          <td><label>成本价 </label></td>
+          <td><input type="text" name="cost_price" value="{$data.cost_price}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="成本价" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+        <!--  12楼 -->
+        <tr>
+          <td><label>佣金 </label></td>
+          <td><input type="text" name="commission" value="{$data.commission}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="佣金" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+          <!--  17楼 -->
+        <tr>
+          <td><label>是否包邮 </label></td>
+          <td style="padding-left: 20px;">
+          <input type="checkbox" name="is_free_shipping" lay-skin="switch" lay-filter="free_shipping" value="1" checked lay-text="开启|关闭">
+          </td>
+        </tr>
+        <!--  17A楼 -->
+        <tr class="free_shipping_hidden">
+          <td><label>邮费模板 </label></td>
+          <td>
+           <!--  2  邮费模板 -->
+          <div class="layui-input-inline" style="height:35px;margin-left: 0px;">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin-left: 20px;">
+      <select name="template_id" id="template_id" class="postage" lay-verify="postage">
+        <option value="">选择邮费模板</option>
+        {volist name="temp" id="tempdata"}
+          <option value="{$tempdata['template_id']}">{$tempdata['template_name']}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+            <!-- 邮费模板  -->
+          </td>
+        </tr>
+        <!--  13楼 -->
+        <tr>
+          <td><label>图片上传 </label></td>
+          <td>
+          <span class="upload_class"><i id="upload_class_img" index="{$data.original_img}" class="layui-icon">&#xe64a;</i><span id="upload_img_show" class="layui-inline layui-upload-choose"></span></span>
+          <button type="button" title="只有表单成功提交后才会上传图片" class="layui-btn" id="message_img" value="{$data.original_img}">
+          <input type="hidden" name="upload_class_img" class="upload_class_img_hidden">
+  <i class="layui-icon">&#xe67c;</i>上传图片
+</button></td>
+        </tr>
+        <!--  14楼 -->
+        <tr>
+          <td><label>视频上传 </label></td>
+          <td>
+          <span class="upload_class"><i id="upload_class_video" class="layui-icon"  index="{$data.video}">&#xe6ed;</i><span id="upload_video_show"></span></span>
+    <button type="button" title="只有表单成功提交后才会上传本视频" id="message_video" class="layui-btn" id="test1">
+    <input type="hidden" name="upload_class_video" class="upload_class_video_hidden">
+  <i class="layui-icon">&#xe67c;</i>上传视频
+</button>
+          </td>
+        </tr>
+
+        <!--  15楼 -->
+        <tr>
+          <td><label>商品重量 </label></td>
+          <td><input type="text" name="weight" value="{$data.weight}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')"  placeholder="以KG为单位" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+        <!--  16楼 -->
+        <tr>
+          <td><label>商品体积 </label></td>
+          <td><input type="text" name="volume" value="{$data.volume}" placeholder="" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+        </tr>
+       
+        <!--  18楼 -->
+        <tr>
+          <td><label>总库存 </label></td>
+          <td><input type="text" name="store_count" value="{$data.store_count}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="总库存" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"><span style="color: red;font-weight: bold;">*</span>必填</td>
+        </tr>
+        <!--  19楼 -->
+        <tr>
+          <td><label>是否虚拟商品 </label></td>
+          <td style="padding-left: 20px;">
+          <input type="checkbox" name="is_virtual" {if condition="$data['is_virtual'] == 1"}checked="checked"{/if} lay-skin="switch" value="1" lay-filter="is_virtual" lay-text="是|否">
+          </td>
+        </tr>
+        <tr class="is_virtual_hidden" {if condition="$data['is_virtual'] != 1"}style="display: none;"{/if} >
+          <td><label style="color:#9D9B6A">商品有效期至 </label></td>
+          <td style="padding-left: 20px;">
+          <input type="text" name="is_virtual_time" id="is_virtual_time" value="{$data['virtual_indate'] | date='Y-m-d H:m:s',###}" class="layui-input" style="width: 260px;">
+          </td>
+        </tr>
+        <tr class="is_virtual_hidden" {if condition="$data['is_virtual'] != 1"}style="display: none;"{/if} >
+          <td><label style="color:#9D9B6A">商品购买上限 </label></td>
+          <td style="padding-left: 20px;">
+          <input type="text" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" value="{$data['virtual_limit']}" onblur="this.value=onblurNum(this.value)" name="is_virtual_num" class="layui-input" placeholder="请填写1~10之间的数字,最高购买数量不能超过10个,默认为1." style="width: 400px;">
+          </td>
+        </tr>
+        <!--  20楼 -->
+        <tr>
+          <td><label>商品关键词 </label></td>
+          <td><input type="text" name="keywords" value="{$data.keywords}" placeholder="多个关键词，用英文字符的逗号隔开" autocomplete="off" class="layui-input" style="width: 450px;margin-left: 20px;"></td>
+          </td>
+        </tr>
+        <!--  20楼 -->
+        
+        <!--  21楼 -->
+        <tr>
+          <td><label>商品详情描述 </label></td>
+        </tr>
+      </table>
+<div style="margin-left: 150px;"><script id="editor" type="text/plain" style="width:900px;height:500px;z-index: 998;"> {$data.goods_content}</script></div>
+   </form>
+  </body>
+</html>

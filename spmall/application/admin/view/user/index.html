@@ -1,0 +1,235 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>用户管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;会员列表管理, 可以给会员群发站内信、邮件等.<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;分销系统可以查看会员上下级信息.<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: red;">添加或者修改了内容请清除缓存.</span>
+</blockquote>
+<div class="layui-form">
+<div class="demoTable" style="float: left;margin-left: 20px;">
+  <span class="layui-btn layui-bg-cyan" data-type="reload">会员总数:  共 {$datanum} 条记录</span>
+  <span class="layui-btn UserDeRedis" data-type="reload">清除缓存</span>
+</div>
+
+<div class="demoTable" style="float: right;margin-right: 20px;">
+  <div class="layui-inline">
+    <input class="layui-input" value="{$search}" name="id" id="demoReload" autocomplete="off">
+  </div>
+  <button class="layui-btn" data-type="reload" lay-submit lay-filter="UserSearch">搜索</button>
+</div>
+ <div class="layui-form-item" style="float: right; clear: inherit;margin-right: 10px;">
+    <div class="layui-input-block">
+      <select name="searchSelect" lay-verify="required">
+    <option value="weikong">选择检索的类型</option>
+    <option value="user_nick" {if condition="'user_nick' == $searchSelect"}selected="selected"{/if}>会员昵称</option>
+    <option value="user_mobile" {if condition="'user_mobile' == $searchSelect"}selected="selected"{/if}>手机号码</option>
+    <option value="user_email" {if condition="'user_email' == $searchSelect"}selected="selected"{/if}>邮箱</option>
+      </select>
+    </div>
+  </div>
+
+
+</div>
+<div style="clear: both;"></div>
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+  <tr>
+    <td width="100%" colspan="14">
+<!-- left -->
+    <div class="layui-btn-container" style="float: left;"> 
+      <button class="layui-btn layui-btn-sm" onclick="ajaxUserAdd('add')"><i class="layui-icon">&#xe654;</i>   新增会员</button> </div>
+    <div class="layui-btn-container" style="float: left;"> 
+      <button class="layui-btn layui-btn-sm" onclick="delAll(this)" lay-event="getznx"><i class="layui-icon">&#xe681;</i>   发送站内信</button> </div>
+    <div class="layui-btn-container" style="float: left;"> 
+      <button class="layui-btn layui-btn-sm" onclick="delAll(this)" lay-event="getemail"><i class="layui-icon">&#xe67c;</i>   发送邮件</button> </div>
+<!-- left -->
+
+
+<!-- right -->
+    <div class="layui-table-tool-self" style="float: right;">
+      <button class="layui-btn layui-btn-sm" style="background: #FFB800;" lay-event="getCheckData">打印</button> 
+    </div>
+    <div class="layui-table-tool-self" style=";float: right;margin-right: 10px;">
+    <a href="javascript:void('0')" id="export">
+      <button class="layui-btn layui-btn-sm" style="background: #FFB800;" lay-event="getCheckData">导出</button>
+      </a>
+    </div>
+
+<!-- right -->
+    </td>
+  </tr>
+
+  <tr>
+    <td width="2%">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+    <!--  <input type="checkbox" name="category" lay-skin="primary" class="layui-input" /> -->
+     </td>
+    <td width="4%">ID</td>
+    <td>会员昵称</td>
+    <td>会员等级</td>
+    <td width="10%">手机号码</td>
+    <td>邮件地址</td>
+    <td>余额</td>
+    <td>累计消费</td>
+    <td>积分</td>
+    <td width="10%">注册日期</td>
+    <td width="7%">是否锁定</td>
+    <td>操作</td>
+  </tr>
+
+{volist name="userlist" id="ul"}
+ <tr>
+    <td>
+      <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='{$ul["user_id"]}'><i class='layui-icon'>&#xe605;</i></div>
+            </td>
+    </td>
+    <td>{$ul['user_id']}</td>
+    <td>{$ul['user_nick']}</td>
+    <td>{$ul['lever_name']}</td>
+    <td>{$ul['user_mobile']}</td>
+    <td>{$ul['user_email']}</td>
+    <td>{$ul['user_money']}</td>
+    <td>{$ul['user_total_amount']}</td>
+    <td>{$ul['user_pay_points']}</td>
+    <td>{$ul['user_reg_time']|date="Y-m-d",###}</td>
+    <td><input type="checkbox" name="userlock" value="{$ul['user_id']}" {if condition="$ul['user_is_lock'] == 0"}checked{/if} onclick="User_is_lock(this.value)" lay-skin="switch" lay-filter="lock" lay-text="开启|关闭"></td>
+    <td>
+      <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="ajaxUserAdd({$ul['user_id']})" lay-event="detail">详情</a>
+      <a class="layui-btn layui-btn-xs" onclick="ajaxUserCapital(this,{$ul['user_id']})" lay-event="capital">资金</a>
+      <a class="layui-btn layui-btn-xs" onclick="ajaxUserCapital(this,{$ul['user_id']})" style="background: #FFB800;" lay-event="address">收货地址</a>
+<!--      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+    </td>
+  </tr>
+
+{/volist}
+
+
+</table>
+    </div>
+
+
+<div id="test1" style="width: 50%;margin: 0px auto;"></div>
+
+<script>
+layui.use(['laypage','form'], function(){
+  var laypage = layui.laypage;
+  form = layui.form;
+
+var pcountInt = parseInt({$datanum}) ; //总数据
+var psizeInt= {$limit}; //页面大小
+var curr = {$curr}; //当前页
+var ptotalpages=Math.ceil(pcountInt/psizeInt);// 总记录数  
+
+// search 
+form.on('submit(UserSearch)',function(data){
+var d = data.field;
+if (d['searchSelect'] == 0) {
+  window.location.href = '/admin/user/index/';
+}
+
+switch(d['searchSelect']){
+    case "user_mobile":
+    var i = TestPhone(d['id']);
+     if (i != "true") {
+        layer.msg(i);
+        return false;
+     }
+    break;
+
+    case "user_email":
+    var i = TestEmail(d['id']);
+     if (i != "true") {
+        layer.msg(i);
+        return false;
+     }
+    break;
+
+    case "user_nick":
+     if (d['id'].length == 0 || d['id'].length > 16) {
+        layer.msg("请输入正确的昵称");
+        return false;
+     }
+    break;
+
+     // default:
+     //    layer.msg("请选择检索的类型");
+     //    return false;
+     // break;
+}
+// /admin/User/index?limit="+obj.limit+"&curr="+curr+"&search="+"{$search}"+"&searchSelect="+"{$searchSelect}";//跳转链接
+  window.location.href = "/admin/user/index/?limit="+psizeInt+"&curr="+'1'+"&search="+d['id']+"&searchSelect="+d['searchSelect'];
+})
+
+  // 锁定
+  form.on('switch(lock)',function(data){
+    var i = data.elem.checked?0:1;
+    var bb = {'user_is_lock':i,'user_id':data.value};
+    $.ajax({
+        type : 'POST',
+        url : '/admin/User/ajaxUserAUD',
+        data : {'data':JSON.stringify(bb),'info':'update'},
+        dataType : 'json',
+        success:function(data){
+          if (data['status'] == 0) {
+                   layer.msg(data['info'], {icon: 5},function () {});
+                }else{
+                   layer.msg(data['info'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                    });
+                  }
+        },
+        error:function(data){
+          layer.msg('网络出错');
+        },
+    })
+  })
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+    ,count: pcountInt //数据总数，从服务端得到
+    ,limit:psizeInt
+    ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+    ,limits: [10, 20, 30, 100]
+    ,pages: ptotalpages //总页数
+    ,curr: curr
+    ,jump: function (obj,first) {
+      if (!first) {
+   var curr=obj.curr;
+   console.log(obj);
+   window.location.href="/admin/User/index?limit="+obj.limit+"&curr="+curr+"&search="+"{$search}"+"&searchSelect="+"{$searchSelect}";//跳转链接
+               }
+       }
+  });
+});
+</script>
+<script type="text/javascript">
+  
+  $(function(){
+    $('#export').click(function(){
+      var text = $('#demoReload').val();
+      var type = "{$searchSelect}";
+      window.location.href = "/admin/User/export_user?text="+text+"&type="+type;
+    })
+  })
+
+</script>
+
+  </body>
+
+</html>

@@ -1,0 +1,50 @@
+{include file="public/header"}
+<body>
+	<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>收货地址管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;会员收货地址列表, 由平台设置管理.</span>
+</blockquote>
+<br>
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+ <tr>
+    <td colspan="6">
+    <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
+    </td>
+  </tr>
+ <tr>
+    <td>id</td>
+    <td>用户名</td>
+    <td>收货人</td>
+    <td>联系方式</td>
+    <td>邮政编码</td>
+    <td>地址</td>
+  </tr>
+
+  {volist name="data" id="vo"}
+	 <tr>
+	    <td>{$vo['address_id']}</td>
+	    <td>{$vo['user_name']}</td>
+	    <td>{$vo['consignee']}</td>
+	    <td>{$vo['mobile']}</td>
+	    <td>{$vo['zipcode']}</td>
+	    <td>{$vo['country_1'].$vo['province_1'].$vo['city_1'].$vo['district_1'].$vo['twon_1'].$vo['address']}</td>
+	  </tr>
+  {/volist}
+
+</table>
+
+
+</body>
+</html>

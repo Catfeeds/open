@@ -1,0 +1,108 @@
+<body>
+<style type="text/css">
+
+.uploadImgLi{
+    width: 100%;
+}
+.uploadImgLi ul li{
+    width: 200px;
+    float: left;
+    list-style:none;
+    padding:0; /* 将默认的内边距去掉 */
+    margin:0; /* 将默认的外边距去掉 */
+    height: 200px;
+}
+.uploadImgLi ul li img{
+  width: 100%;
+}
+</style>
+   <blockquote class="layui-elem-quote" style="color: #999999;">
+   操作提示：图片上传的格式必须是 JPG,PNG,JPEG   标准的尺寸 ： 800*800
+   </blockquote>
+<form class="layui-form layui-col-md12 x-so layui-form-pane" name="file">
+          <div class="upload" id="case"></div>
+        </form>
+<div class="uploadImgLi">
+<ul>
+{volist name="dataimg" id="di"}
+<li><img src="{$di['img_src']}"></li>
+{/volist}
+</ul>
+</div>
+<div style="clear:both"></div>
+    <!--  放大镜  -->
+<!-- 隐藏域 -->
+    <div class="fdjj" style="position: absolute;
+    top: 0px;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.68);
+    z-index: 999;">
+  <div style="position: absolute;
+    top: 20px;
+    left: 13%;
+    width: 800px;
+    height: 800px;
+    z-index: 999;">
+    <img src="" class="fdj_img" width="100%" />
+    </div>
+    </div>
+
+    <!--  放大镜  -->
+   <script type="text/javascript">
+  $(function(){
+  /***
+   * data-height  0 图片上传压缩最大高度，0则根据宽度等比例压缩
+   * data-width 1920  图片上传压缩最大宽度，0则根据高度等比例压缩
+   * data-type  png,jpg,jpeg,gif  允许上传文件的扩展名，多个扩展名用逗号分割，支持非图片格式的文件上传
+   * data-file  file  上传提交服务器的表单名
+   * data-name  uoload  最终表单提交图片路径的表单名
+   * action /upload.php 服务器接收上传文件的地址，服务器需返回{"code":1,"msg":"/upload/1.jpg"}的JSON字符串，code为上传状态，1为成功，0为失败，msg为成功的文件路径或失败原因提示！
+   * data-num 10  最多可以上传多少个文件，如为1，上传插件为单个文件上传样式
+   * data-size  20480 文件上传单个文件最大容量，图片不传不受该属性限制
+   * data-value null  已经上传成功的文件名，多个文件用英文逗号分割
+   * 上传的地址
+  */
+    $("#case").attr({
+      "data-type" : "jpg,png,jpeg",
+      "data-num" : "10",  //上传多少数量
+      "action" : "/admin/goods/goods_img_up",   //测试
+      // "action" : '{:url("goods/goods_img_up")}',
+      "data-size" : "5120",
+  });
+
+$('#delete_img').each(function(){
+  $(this).click(function(){
+    console.log($(this));
+  })
+})
+$('.delete').each(function(){
+  $(this).click(function(){
+    console.log($(this));
+  })
+})
+
+    //获取上传的图片
+    $('.tjj').click(function(){
+      $('.success').each(function(){
+      console.log($(this ).attr('index'));
+      })
+    })
+
+    //放大镜行为
+    $('.fdjj').click(function(){
+       $('.fdjj').hide();
+    })
+    $("#case").upload(
+      //该函数为点击放大镜的回调函数，如没有该函数，则不显示放大镜
+      function(_this,data){
+        $('.fdjj').show();
+        $('.fdj_img').attr('src',data);
+      }
+    );
+  })
+</script>
+
+  </body>
+</html>

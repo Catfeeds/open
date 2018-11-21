@@ -1,0 +1,48 @@
+{include file="public/header"}
+
+<div class="userAddIndexMin">
+
+<table class="layui-input layui-form">
+	<tr>
+		<td></td>
+		<td>
+			<input type="radio" name="sex" value="following" lay-filter="filter" title="发送给以下会员" checked>
+			<input type="radio" name="sex" value="whole" lay-filter="filter" title="发送给全部会员">
+			<input type="hidden" name="Userredio" value="following">
+			<input type="hidden" name="UserSetId" value="{$GetId}">
+		</td>
+		<td></td>
+	</tr>
+	<tr class="UserTwoHr">
+		<td><span class="xx">*</span>会员列表</td>
+		<td>
+		<textarea name="UserZNX" class="UserZNX" style="background: white;padding: 5px;width: 420px;" disabled="disabled" placeholder="{$text}" id="" cols="80" rows="6">{$text}</textarea>
+		</td>
+	</tr>
+	<tr>
+		<td><span class="xx">*</span>发送内容</td>
+		<td>
+		<textarea name="UserZNXTextArea" id="UserZNXTextArea" style="padding: 10px;width: 420px;" cols="80" rows="8" ></textarea>
+		</td>
+	</tr>
+</table>
+	<div class="userAddTableBtn">
+	<button class="layui-btn" id="UserUserZNX">提交</button>
+	</div>
+</div>
+<script type="text/javascript">
+layui.use('form',function(){
+	 var form = layui.form;
+
+	 form.on('radio(filter)', function(data){
+	  if (data.value == 'whole') {
+	  	$('.UserTwoHr').hide();
+	  	$('input[name="Userredio"]').attr('value','whole');
+	  }else{
+	  	$('.UserTwoHr').show();
+	  	$('input[name="Userredio"]').attr('value','following');
+	  }
+	  return false;
+	});
+})
+</script>

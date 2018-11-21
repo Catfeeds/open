@@ -1,0 +1,289 @@
+{include file="public/header"}
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+.tz_goods a:hover{
+  color: red;
+  text-decoration: underline;
+}
+.brank_tj{
+  cursor: pointer;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">商品分类</a>
+        <a>
+          <cite>商品品牌</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：商品品牌是给用户检索的</blockquote>
+      
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" onclick="admin_show()"><i class="layui-icon"></i>添加品牌</button>
+        <span class="x-right" style="line-height:40px">共有数据：<?php echo count($array); ?> 条</span>
+      </xblock>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th width="20px">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="60px">id</th>
+            <th width="">品牌名称</th>
+            <th width="200px">logo</th>
+            <th width="180px">品牌分类</th>
+            <th width="60px">是否推荐</th>
+            <th width="60px">排序</th>
+            <th width="250px">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+  {volist name="data" id="vo"}
+
+ <tr>
+            <td>
+              <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='{$vo["brand_id"]}'><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$i}</td>
+            <td class="tz_goods"><a href="{$vo['brand_url']}" target="_blank">{$vo['brand_name']}</a></td>
+            <td style="padding: 0px 10px ;text-align: center;"><a class="a_mmnn" href="{$vo['brand_logo']}" target="_blank"><img onMouseOver="layer.tips('<img src=\'{$vo.brand_logo}\' />',this,{tips: [1, '#fff']});" onMouseOut="layer.closeAll();" src="{$vo.brand_logo}" height="46px"></a></td>
+            <td>{$vo['cat_name']}</td>
+            <td class="space">
+
+    {if condition="$vo['brand_is_hot'] == 1"}
+<span class="search_index_value brank_tj" style="color: #009688;font-weight: bold;" index="{$vo['brand_id']}" value="0"><i class="layui-icon">&#x1005;</i>&nbsp;是</span>
+{else /}
+<span class="search_index_value brank_tj" style="color: #999999;" index="{$vo['brand_id']}" value="1"><i class="layui-icon">&#x1007;</i>&nbsp;否</span>
+    {/if}
+
+
+            </td>
+            <td><input class="layui-input brank_order" type="text" index="{$vo['brand_id']}" value="{$vo['brand_sort']}" style="width: 40px;height: 30px;"/></td>
+            <td class="td-manage">
+              <a title="查看" class="speclist_bj"  onclick="x_admin_show('编辑','brandlist_update_add?id='+{$vo['brand_id']},620,600)" href="javascript:;">
+                <i class="layui-icon">&#xe63c;编辑</i>
+              </a>
+              <a title="删除" class="speclist_delete" onclick="member_del(this,{$vo['brand_id']})" href="javascript:;">
+                <i class="layui-icon">&#xe640;删除</i>
+              </a>
+            </td>
+          </tr>
+
+  {/volist}
+        </tbody>
+      </table>
+      
+
+
+      <div class="page">
+
+        <div>
+
+       <!--  规格 -->
+          <div class="layui-input-inline" style="height:20px;float: left;margin-left: 50px;">
+      <select name="page_list" id="page_list" style="height: 35px" lay-verify="required" onchange="showMsg(this)">
+        <option value="10" <?php if($page_list == 10){ echo 'selected="selected"';}?>>默认为10</option>
+        <option value="20" <?php if($page_list == 20){ echo 'selected="selected"';}?>>20</option>
+        <option value="50" <?php if($page_list == 50){ echo 'selected="selected"';}?>>50</option>
+        <option value="100" <?php if($page_list == 100){ echo 'selected="selected"';}?>>100</option>
+        <option value="300" <?php if($page_list == 300){ echo 'selected="selected"';}?>>300</option>
+      </select>
+            </div>
+<!--  规格 -->
+<!--  隐藏郁 -->
+<input type="hidden" class="page_hidden" value="{$a}">
+<input type="hidden" class="page_list_hidden" value="{$page_list}">
+<!--  隐藏郁 -->
+          <?php
+            if($page == 1){
+              echo '<span class="current">'.($page).'</span>';
+            }else{
+            if($a != 1){
+                echo '<a class="prev" href="brandlist?page='.($a-1).'&page_list='.$page_list.'">&lt;&lt;</a>';
+              }
+              if($page < 5){
+                 for($i = 1;$i<=$page;$i++){
+                     if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="brandlist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }
+              else if(($a-2) > 0 && $a != $page && ($a+2)<=$page){
+                  for($i = ($a-2);$i<=($a+2);$i++){
+                     if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="brandlist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }else if(($a-2) <= 0){
+                  for($i = 1;$i<=5;$i++){
+                   if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="brandlist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }else if($a == $page || ($a+2)>$page){
+                  for($i = ($page-4);$i<=$page;$i++){
+                   if($i == $a){
+                       echo '<span class="current" style="margin-left: 5px;margin-right: 5px;">'.$i.'</span>';
+                      }else{
+                       echo '<a class="num" href="brandlist?page='.$i.'&page_list='.$page_list.'">'.$i.'</a>';
+                      }
+                  }
+              }
+
+              if($a != $page){
+                echo '<a class="next" href="brandlist?page='.($a+1).'&page_list='.$page_list.'">&gt;&gt;</a>';
+              }
+            }
+          ?>
+          <sapn style="margin-left: 10px;color: #999999;">共：{$page} 页</sapn>
+        </div>
+      </div>
+
+
+    </div>
+    <script>
+      layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+function showMsg(obj) {
+        var opt = obj.options[obj.selectedIndex]  // 夺取选中的页数 opt.value
+        $('.page_list').val(opt.value);
+        window.location.href = "brandlist?page="+$('.page_hidden').val()+"&page_list="+opt.value;
+    }
+
+/** --------------------------------------------------------------------------------- */
+       /*用户-停用*/
+      function member_stop(obj,id){
+          layer.confirm('确认要停用吗？',function(index){
+
+              if($(obj).attr('title')=='启用'){
+
+                //发异步把用户状态进行更改
+                $(obj).attr('title','停用')
+                $(obj).find('i').html('&#xe62f;');
+
+                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                layer.msg('已停用!',{icon: 5,time:1000});
+
+              }else{
+                $(obj).attr('title','启用')
+                $(obj).find('i').html('&#xe601;');
+
+                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                layer.msg('已启用!',{icon: 5,time:1000});
+              }
+              
+          });
+      }
+
+ /*   添加商品品牌函数    */ 
+      function admin_show()
+      {
+         x_admin_show('<sapn style="color:#999999;">添加商品品牌</span>',"{:url('goods/brandlist_add')}",700,520);
+      }
+
+      /*商品品牌-删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $.ajax({
+                  type : 'get',
+                  url : 'brandlist_delete',
+                  data : {data:id,type:'del'},
+                  dataType : 'json',
+                  success:function(data){
+                    var data = jQuery.parseJSON(data);
+                    if (data['static'] == 1) {
+                        $(obj).parents("tr").remove();
+                        layer.msg(data['message'],{icon:1,time:2000});
+                    }else{
+                        layer.msg(data['message'],{icon:2,time:2000});
+                    }
+                  },
+                  error:function(data){
+                        layer.msg(data['message'],{icon:2,time:2000});
+                  }
+              })
+          });
+      }
+       /*商品品牌-删除*/
+      function delAll (argument) {
+
+        var data = tableCheck.getData();
+  
+        layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            $.ajax({
+                  type : 'get',
+                  url : 'brandlist_delete',
+                  data : {data:JSON.stringify(data),type:'delAll'},
+                  dataType : 'json',
+                  success:function(data){
+                    var data = jQuery.parseJSON(data);
+                    if (data['static'] == 1) {
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+                        layer.msg(data['message'],{icon:1,time:2000});
+                    }else{
+                        layer.msg(data['message'],{icon:2,time:2000});
+                    }
+                  },
+                  error:function(data){
+                        layer.msg(data['message'],{icon:2,time:2000});
+                  }
+              });
+        });
+      }
+    </script>
+  </body>
+
+</html>

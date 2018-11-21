@@ -1,0 +1,129 @@
+{include file="public/header"}
+<body>
+<style>
+.layui-select-title input {
+  width: 100px;
+}
+.layui-input-block {
+  width: 300px;
+  float: left;
+  margin-left: 10px; 
+}
+.layui-input-block span{
+  line-height: 38px;
+  color: #999;
+  cursor: pointer;
+}
+
+.layui-input-block span:hover{
+  color: #333;
+}
+.layui-input-block input{
+  width: 130px;
+  display: initial;
+}
+</style>
+<br>
+<form class="layui-form">
+  <div class="layui-form-item">
+    <label class="layui-form-label">金额</label>
+
+<div class="layui-input-block" style="width: 130px;float: left;margin-left: 0px;">
+      <select name="user_money_select" style="width: 100px;">
+          <option value="1">增加金额</option>
+          <option value="2">减少金额</option>
+      </select>
+    </div>
+<div style="clear: bold;"></div>
+    <div class="layui-input-block">
+      <input type="text" name="user_money" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="请输入金额" autocomplete="off" class="layui-input">
+      <span>可用余额：￥{$capital['user_money']}</span>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">积分</label>
+    
+<div class="layui-input-block" style="width: 130px;float: left;margin-left: 0px;">
+      <select name="pay_points_select" style="width: 100px;">
+          <option value="1">增加积分</option>
+          <option value="2">减少积分</option>
+      </select>
+    </div>
+
+    <div class="layui-input-block">
+      <input type="text" name="pay_points" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="请输入积分" autocomplete="off" class="layui-input">
+      <span>可用积分：{$capital['user_pay_points']}</span>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">冻结资金</label>
+    
+<div class="layui-input-block" style="width: 130px;float: left;margin-left: 0px;">
+      <select name="frozen_money_select" style="width: 100px;">
+          <option value="1">增加资金</option>
+          <option value="2">减少资金</option>
+      </select>
+    </div>
+
+    <div class="layui-input-block">
+      <input type="text" name="frozen_money" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="请输入冻结资金" autocomplete="off" class="layui-input">
+      <span>冻结资金：{$capital['user_frozen_money']}</span>
+    </div>
+  </div>
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">操作备注  </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <textarea name="desc" placeholder="请输入操作备注" class="layui-textarea desc"></textarea>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block" style="  width: 100%;">
+      <button class="layui-btn" lay-submit lay-filter="formDemo" style="margin-left: 150px;">立即提交</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+
+layui.use('form',function(){
+  var form = layui.form;
+
+  form.on('submit(formDemo)',function(data){
+    var d = data.field;
+    if (d['desc'] == '' || d['desc'].length == 0) {
+      layer.msg("请输入操作备注");
+      return false;
+    } //  user_money   pay_points   frozen_money
+    if (d['user_money'] == '' && d['pay_points'] == '' && d['frozen_money'] == '') {
+      layer.msg("请输入操作的类型");
+      return false;
+    }
+    d['id'] = {$id};
+    $.ajax({
+        type : 'POST',
+        url  : '/admin/user/ajaxUserAUD',
+        data : {'data':JSON.stringify(d),'info':'userfrozen'},
+        dataType : 'json',
+        success:function(data){
+          if (data['status'] == 0) {
+                   layer.msg(data['info'], {icon: 5},function () {});
+                }else{
+                   layer.msg(data['info'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+        },
+        error:function(data){
+          console.log(data.statusText);
+        }
+    })
+    return false;
+  })
+
+})
+
+</script>
+</body>
+</html>

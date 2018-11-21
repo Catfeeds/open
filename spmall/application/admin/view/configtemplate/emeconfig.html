@@ -1,0 +1,126 @@
+{include file="public/header"}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">配置管理</a>
+        <a>
+          <cite>短信模板配置</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：短信配置模板, 由平台设置管理.
+添加/编辑模板时注意"短信签名"、"短信内容"的填写.</blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" style="background: #27a599;"  onclick="member_add('one')"><i class="iconfont">&#xe6b9;</i>&nbsp;新增模板</button>
+
+      </xblock>
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th style="text-align: center;" width="10%">应用场景</th>
+            <th style="text-align: center;">短信签名</th>
+            <th style="text-align: center;">短信模板</th>
+            <th style="text-align: center;" width="40%">发送短信内容</th>
+            <th style="text-align: center;">修改时间</th>
+            <th style="text-align: center;" width="160px">操作</th>
+            </tr>
+           {volist name="sms_tt" id="smsId"}
+              <tr>
+            <th style="text-align: center;">{switch name="$smsId.scene_id"}
+                  {case value="1"}用户注册{/case}
+                  {case value="2"}找回密码{/case}
+                  {case value="3"}身份验证{/case}
+                  {case value="4"}用户下单{/case}
+                  {case value="5"}客户支付{/case}
+                  {case value="6"}商家发货{/case}
+                  {default /}error
+              {/switch}
+            </th>
+            <th style="text-align: center;">{$smsId.sms_sign}</th>
+            <th style="text-align: center;">{$smsId.sms_tpl_code}</th>
+            <th style="text-align: center;" width="40%">{$smsId.tpl_content}</th>
+            <th style="text-align: center;"><?php echo date("Y-m-d H:i:s",$smsId['up_time']); ?></th>
+            <th style="text-align: center;" width="160px">  <span onclick="member_add({$smsId.st_id})" data-id="" class="speclist_bj">编辑</span>
+                <span onclick="member_del(this,{$smsId.st_id})" data-id="" class="speclist_delete">删除</span>
+            </th>
+            </tr>
+           {/volist}
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </div>
+    <script>
+
+
+
+  // 添加 、 修改 供应商
+      function member_add(id){
+        x_admin_show('新增模板',"{:url('Configtemplate/emeconfig_add')}?id="+id,650,600);
+      }
+      /*单个删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+            $.ajax({
+                  type : "get",
+                  url  : "/admin/Configtemplate/emeconfigDe",
+                  data : {'id':id},
+                  dataType : "json",
+                  success:function(data){
+                     var data = jQuery.parseJSON(data);
+                     if (data['core'] == 0) {
+                      $(obj).parents("tr").remove();
+                      layer.msg(data['msg'],{icon:2,time:1000});
+                     }else{
+                      $(obj).parents("tr").remove();
+                      layer.msg(data['msg'],{icon:1,time:1000});
+                      }
+                  },
+                  error:function(){
+                    layer.msg("提交出错！！！");
+                  }
+            })
+          });
+      }
+
+
+    </script>
+  </body>
+
+</html>

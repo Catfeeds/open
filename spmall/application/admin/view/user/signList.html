@@ -1,0 +1,62 @@
+{include file="public/header"}
+<body>
+	<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>签到记录</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;会员签到记录列表, 由平台设置管理.</span>
+</blockquote>
+<br>
+
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+ <tr>
+    <td colspan="4">
+    <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
+<div class="demoTable" style="float: right;margin-right: 20px;">
+  <div class="layui-inline">
+    <input class="layui-input" value="" placeholder="请输出用户名" id="nick" autocomplete="off">
+  </div>
+  <button class="layui-btn" data-type="reload" id="sign" lay-submit lay-filter="sign">搜索</button>
+</div>
+    </td>
+  </tr>
+ <tr>
+    <td width="10%">id</td>
+    <td>用户名</td>
+    <td>时间</td>
+    <td width="20%">ip</td>
+  </tr>
+
+  {volist name="data" id="vo"}
+	 <tr>
+	    <td>{$vo['id']}</td>
+	    <td>{$vo['user_nick']}</td>
+      <td>{$vo['time']|date="Y-m-d h:i:s",###}</td>
+      <td>{$vo['ip']}</td>
+	  </tr>
+  {/volist}
+
+</table>
+
+<script>
+  
+  $(function(){
+    $('#sign').click(function(){
+      window.location.href = "/admin/User/signList?nick="+$('.nick').val();
+    })
+  })
+
+</script>
+
+</body>
+</html>

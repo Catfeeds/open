@@ -1,0 +1,194 @@
+{include file="public/header"}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+  cursor: pointer;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">配置管理</a>
+        <a>
+          <cite>运费管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：运费模板, 由平台设置管理.</blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" style="background: #27a599;" onclick="member_add('one')"><i class="iconfont">&#xe6b9;</i>&nbsp;添加运费模板</button>
+
+      </xblock>
+ 
+
+
+<?php 
+
+  for($i = 0; $i < count($arrFh); $i++){
+  $text = $arrFh[$i]["type"] == "0"?"件数":($arrFh[$i]["type"] == "1"?"重量":($arrFh[$i]["type"] == "2"?"体积":"error"));
+  $textdw = $arrFh[$i]["type"] == "0"?"件":($arrFh[$i]["type"] == "1"?"克":($arrFh[$i]["type"] == "2"?"立米方":"error"));
+  echo '<div class="flexigrid" style="width: 98%;">
+            <div class="mDiv">
+                <div class="ftitle">
+                    <h3>'.$arrFh[$i]['template_name'].'</h3>
+                    <h5>'.$text.'</h5>
+                </div>
+                <div title="删除运费模板" data-template-id="" onclick="delete_templateConfig(this,'.$arrFh[$i]["template_id"].')" class="pReload delete_template">
+                 <i class="layui-icon layui-icon-face-smile">&#xe640;</i>
+                </div>
+                <a onclick="member_add('.$arrFh[$i]["template_id"].')">
+                <div title="编辑运费模板" class="pReload"><i class="layui-icon layui-icon-face-smile">&#xe642;</i></div></a>
+            </div>
+            <div class="hDiv">
+                <div class="hDivBox">
+                    <table cellspacing="0" style="width: 98%;" cellpadding="0">
+                        <thead>
+                        <tr>
+                            <th align="left" style="width: 32%;" abbr="article_title" axis="col3" class="">
+                                <div style="text-align: center; width: 100%;" class="">配送区域</div>
+                            </th>
+                            <th align="left" style="width: 17%;" abbr="ac_id" axis="col4" class="">
+                                <div style="text-align: center; width: 100%;" class="">首'.$text.'('.$textdw.')</div>
+                            </th>
+                            <th align="left" style="width: 17%;" abbr="ac_id" axis="col4" class="">
+                                <div style="text-align: center; width: 100%;" class="">运费(元)</div>
+                            </th>
+                            <th align="center" style="width: 17%;" abbr="article_show" axis="col5" class="">
+                                <div style="text-align: center; width: 100%;" class="">续'.$text.'('.$textdw.')</div>
+                            </th>
+                            <th align="center" style="width: 17%;" abbr="article_time" axis="col6" class="">
+                                <div style="text-align: center; width: 100%;" class="">运费(元)</div>
+                            </th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <div class="bDiv" style="height: auto;">
+                <div>
+                    <table style="width: 98%;">
+                        <tbody>';
+          for($a = 0; $a < count($arrFh[$i]['info']); $a++){
+              echo '<tr>
+                                <td align="left" style="width: 32%;" class="">
+                                    <div style="text-align: center;  width: 100%;">
+                                    '.$arrFh[$i]['info'][$a][4].'</div>
+                                </td>
+                                <td align="left" style="width: 17%;" class="">
+                                    <div style="text-align: center;  width: 100%;">
+                                    '.$arrFh[$i]['info'][$a][0].'</div>
+                                </td>
+                                <td align="left" style="width: 17%;" class="">
+                                    <div style="text-align: center;  width: 100%;">
+                                    '.$arrFh[$i]['info'][$a][1].'</div>
+                                </td>
+                                <td align="left" style="width: 17%;" class="">
+                                    <div style="text-align: center;  width: 100%;">
+                                    '.$arrFh[$i]['info'][$a][2].'</div>
+                                </td>
+                                <td align="left"  style="width: 17%;" class="">
+                                    <div style="text-align: center;  width: 100%;">
+                                    '.$arrFh[$i]['info'][$a][3].'</div>
+                                </td>
+                            </tr>';
+          }
+          echo '</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>';
+
+  }
+?>
+
+    </div>
+    <script>
+
+  // 添加 、 修改 运费配置
+      function member_add(id){
+        x_admin_show('运费配置',"{:url('Configtemplate/poatconfigadd')}?id="+id,900,700);
+      }
+
+      function member_cur(obj ,id){
+        var yes = '<span data-type="1" style="color: #1BBC9D;cursor: pointer;" data-id='+id+'><i class="layui-icon">&#x1005;</i>是</span>';
+        var no = '<span data-type="0" style="color: #9ea3a7;cursor: pointer;" data-id='+id+'><i class="layui-icon">&#x1007;</i>否</span>';
+        var data = $(obj).children('span').attr("data-type")+"_"+id;
+        $.ajax({
+            type : 'get',
+            url  : '/admin/Configtemplate/supplierconfigadd_insert',
+            data : {'data':JSON.stringify(data),'id':"_m_n"},
+            dataType : 'json',
+            success:function(data){
+        var data = jQuery.parseJSON(data);
+                if (data['core'] == 0) {
+                   layer.msg(data['message'], {icon: 5},function () {});
+              }else{
+                if ($(obj).children('span').attr("data-type") == 0) {
+                  $(obj).html(yes);
+                }else{
+                  $(obj).html(no);
+                }
+                  }
+            },
+            error:function(){
+              layer.msg("提交出错！！！");
+            }
+        })
+        
+      }
+      /*单个删除*/
+      function delete_templateConfig(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+            $.ajax({
+                  type : "get",
+                  url  : "/admin/Configtemplate/TConfig_delete",
+                  data : {'info':"templateConfig",'id':id},
+                  dataType : "json",
+                  success:function(data){
+                     if (data['info'] == 0) {
+                      layer.msg(data['data'],{icon:2,time:1000});
+                     }else{
+                      $(obj).parents(".mDiv").parents(".flexigrid").remove();
+                      layer.msg(data['data'],{icon:1,time:1000});
+                      }
+                  },
+                  error:function(){
+                    layer.msg("提交出错！！！");
+                  }
+            })
+          });
+      }
+
+    </script>
+  </body>
+
+</html>

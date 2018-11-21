@@ -1,0 +1,68 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>等级管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;会员等级管理， 不同会员等级可设置不同折扣
+</blockquote>
+<div class="layui-form">
+<div class="demoTable" style="float: left;margin-left: 20px;">
+</div>
+
+</div>
+<div style="clear: both;"></div>
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+  <tr>
+    <td width="100%" colspan="14">
+<!-- left -->
+    <div class="layui-btn-container" style="float: left;"> 
+      <button class="layui-btn layui-btn-sm" onclick="ajaxlevelListAdd(this,'add')" lay-event="add"><i class="layui-icon">&#xe654;</i>新增会员等级</button> </div>
+<!-- left -->
+
+    </td>
+  </tr>
+
+  <tr>
+    <td width="2%">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+     </td>
+    <td>等级</td>
+    <td>等级名称</td>
+    <td>消费额度</td>
+    <td>折扣率</td>
+    <td>等级描述</td>
+    <td>操作</td>
+  </tr>
+
+  {volist name="list" id="l"}
+<tr>
+    <td><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div> </td>
+    <td>{$l['lever_grade']}</td>
+    <td>{$l['lever_name']}</td>
+    <td>{$l['lever_position']}</td>
+    <td>{$l['lever_discount']}</td>
+    <td>{$l['lever_desc']}</td>
+    <td>
+      <a class="layui-btn layui-btn-xs" onclick="ajaxlevelListAdd(this,{$l['lever_grade']})" lay-event="edit">编辑</a>
+      <a class="layui-btn layui-btn-primary layui-btn-xs" onclick="ajaxlevelListAdd(this,{$l['lever_id']})" lay-event="delete">删除</a>
+    </td>
+  </tr>
+  {/volist}
+</table>
+    </div>
+
+  </body>
+
+</html>

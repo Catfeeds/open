@@ -1,0 +1,190 @@
+{include file="public/header"}
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">文章管理</a>
+        <a>
+          <cite>文章列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：文章管理, 由总平台设置管理.</blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>&nbsp;批量删除</button>
+        <button class="layui-btn layui-btn-danger" style="background: #27a599;" onclick="speclist_edit('add')"><i class="iconfont">&#xe6b9;</i>&nbsp;添加文章</button>
+        <span class="x-right" style="line-height:25px">
+         <div class="layui-form-item">
+<!--  规格 -->
+  <form id="artclass">
+          <div class="layui-input-inline" style="height:35px;width: 300px;">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <select name="artclass" class="artclass" lay-filter="artclass" lay-verify="required">
+        <option value="">选择分类</option>
+        {volist name="artclass" id="ac"}
+          <option value="{$ac['ac_id']}" {if condition="$artId == $ac['ac_id']"}selected="selected"{/if}>{$ac['ac_title']}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+              </div>
+            </div>
+<!--  规格 -->
+</form>
+            </div>
+        </span>
+      </xblock>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            <th width="20px">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="5%">ID</th>
+            <th width="30%">标题</th>
+            <th width="10%">文章分类</th>
+            <th width="10%">显示</th>
+            <th width="20%">发布时间</th>
+            <th width="25%">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {volist name="artlist" id="al"}
+        <tr>
+            <td>
+              <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id=""><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$i}</td>
+            <td style="text-decoration:underline;">{$al['al_title']}</td>
+            <td>{$al['ac_title']}</td>
+            <td><input type="checkbox" name="al_static" data-id="{$al['Id']}" lay-filter="al_static" lay-skin="switch" lay-text="开启|关闭" {if condition="$al['al_static'] == 1"}checked="checked"{/if}></td>
+            <td>{$al['al_time']}</td>
+            
+            <td class="td-manage">
+              <a title="删除" onclick="member_view({$al['Id']})" class="speclist_delete" href="javascript:;">
+                <i class="layui-icon">&#xe635;</i>&nbsp;查看
+              </a>
+              <a title="删除" onclick="member_del(this,{$al['Id']})" class="speclist_delete" href="javascript:;">
+                <i class="layui-icon">&#xe640;</i>&nbsp;删除
+              </a>
+              <a title="编辑" onclick="speclist_edit({$al['Id']})" class="speclist_bj" href="javascript:;">
+                <i class="layui-icon">&#xe642;</i>&nbsp;编辑
+              </a>
+            </td>
+          </tr>
+        {/volist}
+
+        </tbody>
+      </table>
+
+
+<div style="text-align:center;" id="test1"></div>
+        </div>
+    <script>
+      layui.use(['laydate','laypage','form'], function(){
+        var laydate = layui.laydate
+        ,laypage = layui.laypage
+        ,form = layui.form;
+
+form.on('switch(al_static)',function(data){
+   var o = "";
+  if(data.elem.checked){
+    var o = 1 ;
+  }else{
+    var o = 0 ;
+  }
+  //发异步删除数据
+              $.ajax({
+                  type : 'post',
+                  url : '/admin/Article/articlelist_insert',
+                  data : {'data':o,'info':'static','id':$(this).attr('data-id')},
+                  dataType : 'json',
+                  success:function(data){
+                       layer.msg(data['info'], {icon: 1},function () {});
+                   }
+              })
+})
+// var pcountInt = $("#test1").attr("data-num");
+var pcountInt = parseInt({$datanum}) ; //总数据
+var psizeInt= {$psizeIntablet}; //页面大小
+var pindex = {$pindex} ; //当前页
+var ptotalpages=Math.ceil(pcountInt/psizeInt);// 总记录数      
+  
+form.on('select(artclass)',function(data){
+   window.location.href="/admin/Article/articlelist?psizeInt="+psizeInt+"&pindex="+1+"&"+$('#artclass').serialize();//跳转链接
+})
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+    ,count: pcountInt //数据总数，从服务端得到
+    ,limit:psizeInt
+    ,layout: ['limit', 'prev', 'page', 'next']
+    ,limits: [10, 20, 30, 100]
+    ,pages: ptotalpages //总页数
+    ,curr: pindex
+    ,jump: function (obj,first) {
+      if (!first) {
+   // var parId=$("#parId").val();
+   var pindex=obj.curr;
+   window.location.href="/admin/Article/articlelist?psizeInt="+obj.limit+"&pindex="+pindex+"&artId="+$('#artclass').serialize();//跳转链接
+               }
+       }
+  });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+      });
+
+      function delAll(){
+
+      }
+
+    function showMsg(obj) {
+        var opt = obj.options[obj.selectedIndex]  // 夺取选中的页数 opt.value
+        $('.page_list').val(opt.value);
+        window.location.href = "speclist?page="+$('.page_hidden').val()+"&page_list="+opt.value+"&seacer="+$('.speclist').val();
+    }
+
+      function speclist_edit(id){
+        console.log(id);
+        x_admin_show('文章管理',"{:url('Article/articlelist_edit')}?name="+id,1100,800);
+      }
+
+      /*单个删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $.ajax({
+                  type : 'post',
+                  url : '/admin/Article/articlelist_insert',
+                  data : {'data':'0','info':'delete','id':id},
+                  dataType : 'json',
+                  success:function(data){
+                    if (data['data'] == 0) {
+                       layer.msg(data['info'], {icon: 5},function () {});
+                   }else{
+                      $(obj).parents("tr").remove();
+                      layer.msg(data['info'],{icon:1,time:1000}),function () {
+                        repla();
+                      }}
+                  }
+              })
+          });
+      }
+
+    </script>
+  </body>
+
+</html>

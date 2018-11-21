@@ -1,0 +1,164 @@
+{include file="public/header"}
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css">
+    .layui-form-item label{
+      width: 100px;
+    }
+    .layui-form-item input{
+      width: 280px;
+    }
+    .layui-form-item textarea{
+      width: 280px;
+      height: 100px;
+    }
+    .layui-select-title input{
+      width: 190px;
+    }
+  </style>
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+          <div class="layui-form-item">
+              <label for="supp_name" class="layui-form-label">
+                  <span class="x-red">*</span>短信签名
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" value="{$data['sms_sign']}" lay-verify="required" name="sms_name" required=""
+                  autocomplete="off" class="layui-input">
+                  <span style="color: #AAA;font-size: 13px;">必须与短信平台短信签名一致</span>
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="supp_line" class="layui-form-label">
+                  <span class="x-red">*</span>短信模板ID
+              </label>
+              <div class="layui-input-inline" style="width: 280px;">
+                  <input type="text" value="{$data['sms_tpl_code']}" lay-verify="required" name="sms_line" required=""
+                  autocomplete="off" class="layui-input">
+                  <span style="color: #AAA;font-size: 13px;">必须与短信平台短信模板ID一致</span>
+              </div>
+          </div>
+            <div class="layui-form-item">
+                    <label for="L_type" class="layui-form-label">
+                        <span class="x-red">*</span>发送场景
+                    </label>
+                    <!--  规格 -->
+                <!-- -->
+                <?php
+                  $mb = '';
+                if($data != ""){
+                  switch($data['scene_id']){
+                  case 1:
+                      $mb = "用户注册";
+                    break;
+                  case 2:
+                      $mb = "找回密码";
+                    break;
+                  case 3:
+                      $mb = "身份验证";
+                    break;
+                  case 4:
+                      $mb = "用户下单";
+                    break;
+                  case 5:
+                      $mb = "客户支付";
+                    break;
+                  case 6:
+                      $mb = "商家发货";
+                    break;
+                    default:
+                       $mb = "出错！！！";
+                    break;
+                  }
+                    echo '<span style="padding-top: 10px;display: flex;">'.$mb.'</span><input type="hidden" name="sms_cj" value="'.$data['scene_id'].'">';
+                }else{
+                echo '<div class="layui-input-inline" style="height:35px">
+                    <div class="layui-form" action="">
+                        <div class="layui-form-item">
+          <div class="layui-input-block" style="margin: 0px;">
+            <select name="sms_cj" style="width:130px;" class="supplires_admin" lay-verify="required">
+              <option value="">选择场景</option>';
+
+              for($i = 0; $i<count($scene); $i++){
+               echo '<option value="'.$scene[$i]["Id"].'">'.$scene[$i]["scene_name"].'</option>';
+              }
+           echo '</select>
+                  
+          </div>
+        </div>
+                    </div>
+                  </div>
+                  <br>';
+
+                }
+
+                ?>
+            <span style="color: #AAA;font-size: 13px;">使用场景</span>
+      <!--  规格 -->
+                </div>
+            <br>
+          <div class="layui-form-item">
+              <label for="L_item" class="layui-form-label">
+                  短信内容
+              </label>
+              <div class="layui-input-inline">
+                  <textarea name="sms_textarea" id="textarea_suppli" placeholder="例如：你的验证码为：${code}，该验证码5分钟内有效，请勿泄露他人" class="layui-textarea">{$data.tpl_content}</textarea>
+              </div>
+               <div class="layui-form-mid layui-word-aux" style="margin-left: 130px;">
+                  <span class="x-red">* 模板内容必须与<a target="_blank" style="text-decoration: underline;" href="https://dayu.aliyun.com/product/sms">阿里大于</a>后台配置短信模板内容一致, 否则无法发送短信</span>
+              </div>
+          </div>
+          <br>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  添加  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+          //刷新页面
+function repla()
+      {
+        parent.location.reload();
+      }
+          //监听提交
+          form.on('submit(add)', function(data){
+            //发异步，把数据提交给php
+            $.ajax({
+              data : 'post',
+              url : '/admin/Configtemplate/emeconfigsave',
+              data : {'data':JSON.stringify(data.field),'info':{$id}},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                var data = jQuery.parseJSON(data);
+                if (data['core'] == 0) {
+                   layer.msg(data['msg'], {icon: 5},function () {});
+              }else{
+                   layer.msg(data['msg'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+              },
+              error:function(){
+                layer.msg("请求出错，请检查是否网络问题！！！");
+              }
+            })
+            return false;
+          });
+          
+          
+        });
+    </script>
+  </body>
+
+</html>

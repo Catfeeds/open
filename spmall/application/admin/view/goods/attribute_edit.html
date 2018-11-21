@@ -1,0 +1,150 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+          <div class="layui-form-item">
+              <label for="L_name" class="layui-form-label">
+                  <span class="x-red">*</span>规格名称
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="L_name" lay-verify="required" name="L_name" required="" value="{$data['attribute_name']}" readOnly=＂true＂
+                  autocomplete="off" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">
+                  <span class="x-red">* </span> 不可编辑
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="L_type" class="layui-form-label">
+                  <span class="x-red">*</span>所属模型
+              </label>
+              <!--  规格 -->
+          <div class="layui-input-inline" style="height:35px">
+              <div class="layui-form" action="">
+                  <div class="layui-form-item">
+    <div class="layui-input-block" style="margin: 0px;">
+      <select name="speclist" class="speclist" lay-verify="required">
+        <option value="">选择模型</option>
+        {volist name="type" id="vo"}
+           <option value="{$vo}" <?php if($speclist == $vo){ echo 'selected="selected"';}?>> {$vo}</option>
+        {/volist}
+      </select>
+    </div>
+  </div>
+
+              </div>
+            </div>
+<!--  规格 -->
+          </div>
+        
+  
+<div class="layui-form-item">
+              <label for="L_order" class="layui-form-label">
+                  <span class="x-red"></span>录入方式
+              </label>
+              <div class="layui-input-block">
+                <input type="radio" name="input_type" value="0" checked="" title="手工录入">
+                <input type="radio" name="input_type" value="1" title="从下面列表中选择">
+                 <input type="radio" name="input_type" value="2" title="多行文本框">
+              </div> 
+          </div>
+
+          <div class="layui-form-item">
+              <label for="L_item" class="layui-form-label">
+                  可选值列表
+              </label>
+            <div class="layui-input-inline">
+              <input type="hidden" class="attribute_textarea_hidden" value="{$data['attribute_value']}">
+                  <textarea name="textarea" id="stribute_textarea_class" class="layui-textarea"></textarea>
+              </div>
+               <div class="layui-form-mid layui-word-aux">
+                  <span class="x-red">一行代表一个可选值</span>
+              </div>
+          </div>
+          <span style="color: #999999;margin-left: 107px;">录入方式为手工或者多行文本时，此输入框不需填写</span>
+          <br>
+
+
+
+
+          <div class="layui-form-item">
+              <label for="L_order" class="layui-form-label">
+                  <span class="x-red"></span>检索
+              </label>
+              <div class="layui-input-block">
+                <input type="radio" name="static" value="1" <?php if($data['attribute_index'] == 1){ echo 'checked';} ?> title="是">
+                <input type="radio" name="static" value="0" <?php if($data['attribute_index'] == 0){ echo 'checked';} ?> title="否">
+              </div>  
+              
+          </div>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  修改  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+          //刷新页面
+function repla()
+      {
+        parent.location.reload();
+      }
+          //监听提交
+          form.on('submit(add)', function(data){
+            var datalist = jQuery.parseJSON(JSON.stringify(data.field));
+            if (datalist['speclist'] == '') {
+                layer.msg('带星号的必填',function(){});
+            }
+            //发异步，把数据提交给php
+            $.ajax({
+              data : 'get',
+              url : '/admin/Goods/attribute_edit_update',
+              data : {'data':JSON.stringify(data.field),'textarea':datalist['textarea'].replace(/\n/g, "_M_m")},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                var data = jQuery.parseJSON(data);
+                if (data['static'] == 0) {
+                   layer.msg(data['message'], {icon: 5},function () {});
+                }else{
+                      layer.alert(data['message'], {icon: 6},function () {
+                      // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);
+                  });
+                }
+              },
+            })
+            return false;
+          });
+          
+          
+        });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+       /**
+     * 编辑属性的文本域输出
+     */
+     var aa = $('.attribute_textarea_hidden').val()||'';
+    var text = aa.split("_M_m");//$('.textarea_hidden').val()
+    var sum = '';
+    for (var i = 0; i < text.length; i++) {
+       sum = sum+text[i]+'\n';
+    }
+    $('#stribute_textarea_class').val(sum.substr(0,sum.length-1));
+    })
+    </script>
+  </body>
+
+</html>

@@ -1,0 +1,311 @@
+{include file="public/header"}
+<div class="layui-tab">
+  <ul class="layui-tab-title">
+    <li class="layui-this">通用信息</li>
+    <li>商品相册</li>
+    <li>商品模型</li>
+    <li>积分折扣</li>
+  </ul>
+  <input type="hidden" name="goods_hidden_id" class="goods_hidden_id" value="{$data.goods_id}">
+  <div class="layui-tab-content">
+    <div class="layui-tab-item layui-show">{include file="public/goods_add_message"}</div>
+    <div class="layui-tab-item">{include file="public/goods_add_img"}</div>
+    <div class="layui-tab-item">{include file="public/goods_add_speclist"}</div>
+    <div class="layui-tab-item">{include file="public/goods_add_integral"}</div>
+  </div>
+</div>
+ <center><button class="layui-btn zjttt" id="file_upload" lay-submit="sreach" lay-filter="addgoods"><i class="layui-icon"></i>增加</button>
+ <button id="file_upload_img" style="display: none;"></button></center>
+<br><br>
+ 
+<script>
+//注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+layui.use('element', function(){
+  var element = layui.element;
+});  
+//实例化文本域
+var ue = UE.getEditor('editor');
+
+
+
+//from 表单的处理layui
+layui.use(['layer', 'form','upload','laydate'], function(){
+  var layer = layui.layer
+  ,form = layui.form
+  ,laydate = layui.laydate
+  ,upload = layui.upload;
+  
+ //  刷新
+  function repla()
+      {
+        parent.location.reload();
+      }
+  //日期控件
+
+    laydate.render({
+    elem: '#is_virtual_time' //指定元素
+    // ,format: 'yyyy-MM-dd HH:mm:ss',
+    ,type: 'datetime'
+    ,max: '2099-06-16 23:59:59',
+    istime: true,   //是否显示时分秒
+  });
+
+  //img 执行实例
+  var uploadInst = upload.render({
+    elem: '#message_img' //绑定元素
+    ,url: '/admin/goods/ajaxMessageUpload/' //上传接口
+    ,data: {id: 'img'}
+    ,accept: 'images' //允许上传的文件类型
+    // ,auto: false //选择文件后不自动上传
+    // ,bindAction: '#file_upload_img' //指向一个按钮触发上传
+    ,choose:function(obj){   //选择文件后的回调函数
+    //obj参数包含的信息
+      // obj.preview(function(index, file, result){    
+      //     });
+
+    }
+    ,before: function(obj){   //上传文件前回调
+    layer.load(2); //上传loading
+  }
+    ,done: function(res, index, upload){
+      //上传完毕回调
+     layer.closeAll('loading'); //关闭loading
+            $('#upload_img_show').html(res.msg);
+            $('.upload_class_img_hidden').attr('value',res.data);
+            $('#upload_class_img').attr('index',res.data);
+    }
+    ,error: function(res){
+      //请求异常回调
+     layer.msg("请求异常",0);
+     layer.closeAll('loading'); //关闭loading
+    }
+  });
+
+    //video 执行实例
+  var uploadInst = upload.render({
+    elem: '#message_video' //绑定元素
+    ,url: '/admin/goods/ajaxMessageUpload/' //上传接口
+    ,data: {id: 'video'}
+    ,accept: 'video' //允许上传的文件类型
+    // ,auto: false //选择文件后不自动上传
+    // ,bindAction: '#file_upload' //指向一个按钮触发上传 
+    ,choose:function(obj){   //选择文件后的回调函数
+    //obj参数包含的信息
+      // obj.preview(function(index, file, result){    
+           
+      //     });
+
+    }
+    ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+    layer.load(2); //上传loading
+  }
+    ,done: function(res, index, upload){
+      //上传完毕回调
+     layer.closeAll('loading'); //关闭loading
+     $('#upload_video_show').html(res.msg);
+            $('.upload_class_video_hidden').attr('value',res.data);
+            $('#upload_class_video').attr('index',"/static/image/images/stop_paly.jpg");
+    }
+    ,error: function(){
+      //请求异常回调
+     layer.msg("请求异常",0);
+     layer.closeAll('loading'); //关闭loading
+    }
+  });
+
+
+
+  /**  ------------------------分割线  联动显示  商品--------------------------------------------  */
+  //one
+  form.on('select(one)',function(data){
+   $.ajax({
+                  type: 'POST',
+                  url: '/admin/goods/findCity/',
+                  data: {data:data.value,type:'one'},
+                  dataType:  'json',
+                  success: function(data){
+                  $("#goods_two").html("");
+                  $("#goods_thr").html("");
+                  for (var i = 0; i < data.length; i++) {
+                    var option1 = "<option value='"+data[i]['parent_id_path']+"'>"+data[i]['cate_last_name']+"</option>";
+                      $("#goods_two").append(option1);
+
+                  $("#blank_ajax").html("");
+                  var blank_html = '<option value="">选择商品品牌</option>';
+                  $("#blank_ajax").append(blank_html);
+                  }
+                      form.render('select');
+                      $("#goods_two").get(0).selectedIndex=0;
+                  }
+          }); 
+  })
+// two
+    form.on('select(two)', function(data){
+    $.ajax({
+                  type: 'POST',
+                  url: '/admin/goods/findCity/',
+                  data: {data:data.value,type:'two'},
+                  dataType:  'json',
+                  success: function(data){
+                    var brand = data.data;   //  blank_ajax
+                    var data = data.info;  
+                  $("#goods_thr").html("");
+                  $("#blank_ajax").html("");
+                  for (var i = 0; i < data.length; i++) {
+                    var option1 = "<option value='"+data[i]['parent_id_path']+"''>"+data[i]['cate_last_name']+"</option>";
+                      $("#goods_thr").append(option1);
+                  }
+                  var blank_html = '<option value="">选择商品品牌</option>';
+                  $("#blank_ajax").append(blank_html);
+                  for (var b = 0; b < brand.length; b++) {
+                    var blank_html = "<option value='"+brand[i]['brand_id']+"'>"+brand[i]['brand_name']+"</option>";
+                      $("#blank_ajax").append(blank_html);
+                  }
+                      form.render('select');
+                      $("#goods_thr").get(0).selectedIndex=0;
+                  }
+          }); 
+  });
+
+ /**  ------------------------分割线  联动显示 商品------------------------------------  */
+/**  ------------------------分割线  联动显示  商品模型------------------------------------    */
+  form.on('select(speclist_list)',function(data){
+    $('.delect_class_speclist').remove();
+   // $('.attribute_index_mm').remove();
+   $.ajax({
+                  type: 'get',
+                  url: "{:url('goods/getGoodsSpeclist')}",
+                  data: {data:data.value},
+                  dataType: 'html',
+                  contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                  success: function(data){
+                    var data = jQuery.parseJSON(data);
+                    $('.speclist_nl_table').append(data.info.html);
+                    $('.attribute_index_mm').html(data.info.html_attr);$('.speclist_mou_index').html('');
+                   $.getScript('__STATIC_admin__/public/goods/Getgoods.js',function(){});
+                  },
+                  error:function(){
+                    console.log("出错");
+                  }
+          }); 
+  })
+
+// 是否包邮
+   form.on('switch(is_virtual)', function (data) {
+     if(data.elem.checked){
+      $('.is_virtual_hidden').show();
+     }else{
+      $('.is_virtual_hidden').hide()
+     }
+   })
+// 是否包邮
+   form.on('switch(free_shipping)', function (data) {
+        if(data.elem.checked){
+          $('.free_shipping_hidden').hide();
+        }else{
+          $('.free_shipping_hidden').show();
+        }
+        $.ajax({
+          type : 'get',
+          url : 'ajaxFreeshipping',
+          dataType : 'json',
+          success:function(data){
+            
+          },
+          error:function(){
+            // layer.msg("出错 :( ");
+          }
+        })
+     })
+   //**********//
+   //
+   // 添加商品
+   form.on('submit(addgoods)', function () {
+     var emptyId = ({$emptyId} == "000000")?true:false;
+  var d = {};
+  var connt = $('form').serializeArray();
+   $.each(connt, function() {
+      d[this.name] = this.value;
+    });
+    if(emptyId){  // 新建商品
+      d["emptyId"] = "emptyId";
+      d['goods_sn'] = $('input[name="goods_sn"]').val();
+    }else{  //修改商品
+      d["emptyId"] = {$emptyId};
+    }
+    // 异步传输全部数据到后台
+    $.ajax({
+        type : "POST",
+        url  : "/admin/goods/goodsAddUpdate/",
+        data : {"data":JSON.stringify(d)},
+        dataType: "json",
+        success:function(data){
+          if (data.data == '1') {
+            layer.alert(data['info'], {icon: 6},function () {
+                      // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);
+                  });
+
+          }else{
+           layer.alert(data['info'], {icon: 5})
+          }
+        },
+        error:function(){
+          layer.msg("出错 :( ");
+        }
+    })
+   })
+   
+}); 
+</script>
+      
+ <script type="text/javascript">
+
+ 
+ /**
+  * [表单提交]
+  * @param  {form} ){               var d [description]
+  * @return {[data json]}     [description]
+  */
+ // $('.zjttt').click(function(){
+ //  var emptyId = ({$emptyId} == "000000")?true:false;
+ //  var d = {};
+ //  var connt = $('form').serializeArray();
+ //   $.each(connt, function() {
+ //      d[this.name] = this.value;
+ //    });
+ //    if(emptyId){  // 新建商品
+ //      d["emptyId"] = "emptyId";
+ //      d['goods_sn'] = $('input[name="goods_sn"]').val();
+ //    }else{  //修改商品
+ //      d["emptyId"] = {$emptyId};
+ //    }
+ //    // 异步传输全部数据到后台
+ //    $.ajax({
+ //        type : "POST",
+ //        url  : "/admin/goods/goodsAddUpdate/",
+ //        data : {"data":JSON.stringify(d)},
+ //        dataType: "json",
+ //        success:function(data){
+ //          if (data.data == '1') {
+ //            alert(data.info);
+ //           // 获得frame索引
+ //           var index = parent.layer.getFrameIndex(window.name);
+ //            //关闭当前frame
+ //           parent.layer.close(index);
+ //           setInterval(repla(),2000);
+ //          }else{
+ //            alert(data.info);
+ //          }
+ //        },
+ //        error:function(){
+ //          alert("出错 :( ");
+ //        }
+ //    })
+ //  });
+ </script>
+
+</html>

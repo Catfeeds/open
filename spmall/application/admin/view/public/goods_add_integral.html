@@ -1,0 +1,30 @@
+<body>
+   <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：请务必正确填写商品信息</blockquote>
+  </body>
+<form class="layui-form">
+ <table class="table_goods" style="border-collapse:separate; border-spacing:15px; margin-left: 100px;">
+      <!--  1楼 -->
+        <tr>
+          <td><label>赠送积分 </label></td>
+          <td><input type="text" name="give_integral"  placeholder="赠送积分" value="{$data.give_integral}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" autocomplete="off" class="layui-input usernamea" style="width: 400px;margin-left: 20px;"></td>
+        </tr>
+        <!--  2楼 -->
+        <tr>
+          <td><label>金币可抵 </label></td>
+          <td><input type="text" name="Gold_offset"  placeholder="PS:输入的是金币数量，对应抵押金额" value="{$data.Gold_offset}" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" autocomplete="off" class="layui-input usernamea" style="width: 400px;margin-left: 20px;"> </td>
+        </tr>
+         <!--  3楼 -->
+        <tr>
+          <td><label>积分兑换 </label></td>
+          <td style="padding-left: 20px;">
+          <input type="checkbox" name="exchange_integral" lay-skin="switch" value="1" {if condition="$data.exchange_integral == 1"}checked{/if} lay-text="开启|关闭">
+          </td>
+        </tr> 
+        
+  </table>
+
+
+</form>
+
+</html>
+

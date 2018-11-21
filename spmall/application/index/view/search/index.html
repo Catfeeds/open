@@ -1,0 +1,179 @@
+{include file="public/introduction"}
+					<div class="am-g am-g-fixed">
+						<div class="am-u-sm-12 am-u-md-12">
+	                  	<div class="theme-popover">												
+							<div class="searchAbout">
+								<div class="font-pale">全部结果&nbsp;&nbsp;>&nbsp;&nbsp;</div>
+								<?php echo $nav ;?>
+							</div><br>
+							<div style="clear:both"></div>
+								<?php echo $shtm ;?>
+							<div class="clear"></div>
+                        </div>
+							<div class="search-content">
+								<div class="sort">
+									<li class="first"><a title="综合">综合排序</a></li>
+									<li><a title="销量">销量排序</a></li>
+									<li><a title="价格">价格优先</a></li>
+									<li class="big"><a title="评价" href="#">评价为主</a></li>
+								</div>
+								<div class="clear"></div>
+
+								<ul class="am-avg-sm-2 am-avg-md-3 am-avg-lg-4 boxes">
+									
+									{volist name="d" id="void"}
+										<li>
+										<div class="i-pic limit">
+											<img src="__STATIC_imgage__/images/imgsearch1.jpg" />											
+											<p class="title fl">{$void['goods_name']}子旗舰店】手剥松子218g 坚果炒货零食新货巴西松子包邮</p>
+											<p class="price fl">
+												<b>¥</b>
+												<strong>{$void['shop_price']}</strong>
+											</p>
+											<p class="number fl">
+												销量<span>{$void['sales_sum']}</span>
+											</p>
+										</div>
+									</li>
+									{/volist}
+			<!-- 商品列表1  ->
+									<li>
+										<div class="i-pic limit">
+											<img src="__STATIC_imgage__/images/imgsearch1.jpg" />											
+											<p class="title fl">【良品铺子旗舰店】手剥松子218g 坚果炒货零食新货巴西松子包邮</p>
+											<p class="price fl">
+												<b>¥</b>
+												<strong>56.90</strong>
+											</p>
+											<p class="number fl">
+												销量<span>1110</span>
+											</p>
+										</div>
+									</li>
+			<!- 商品列表2  ->
+									<li>
+										<div class="i-pic limit">
+											
+											<img src="__STATIC_imgage__/images/imgsearch1.jpg" />
+											<p class="title fl">手剥松子218g 坚果炒货零食新货巴西松子包邮</p>
+											<p class="price fl">
+												<b>¥</b>
+												<strong>56.90</strong>
+											</p>
+											<p class="number fl">
+												销量<span>1110</span>
+											</p>
+										</div>
+									</li>
+										<!- 商品列表2  ->
+									<li>
+										<div class="i-pic limit">
+											
+											<img src="__STATIC_imgage__/images/imgsearch1.jpg" />
+											<p class="title fl">手剥松子218g 坚果炒货零食新货巴西松子包邮</p>
+											<p class="price fl">
+												<b>¥</b>
+												<strong>56.90</strong>
+											</p>
+											<p class="number fl">
+												销量<span>1110</span>
+											</p>
+										</div>
+									</li>
+										<!- 商品列表2  ->
+									<li>
+										<div class="i-pic limit">
+											
+											<img src="__STATIC_imgage__/images/imgsearch1.jpg" />
+											<p class="title fl">手剥松子218g 坚果炒货零食新货巴西松子包邮</p>
+											<p class="price fl">
+												<b>¥</b>
+												<strong>56.90</strong>
+											</p>
+											<p class="number fl">
+												销量<span>1110</span>
+											</p>
+										</div>
+									</li>
+										<!- 商品列表2  ->
+									<li>
+										<div class="i-pic limit">
+											
+											<img src="__STATIC_imgage__/images/imgsearch1.jpg" />
+											<p class="title fl">手剥松子218g 坚果炒货零食新货巴西松子包邮</p>
+											<p class="price fl">
+												<b>¥</b>
+												<strong>56.90</strong>
+											</p>
+											<p class="number fl">
+												销量<span>1110</span>
+											</p>
+										</div>
+									</li>
+				<!- 商品列表  -->
+								</ul>
+							</div>
+							<div class="search-side">
+
+								<div class="side-title">
+									热点推荐
+								</div>
+<!-- 热点推荐列表  -->
+								<li>
+									<div class="i-pic check">
+										<img src="__STATIC_imgage__/images/cp.jpg" />
+										<p class="check-title">萨拉米 1+1小鸡腿</p>
+										<p class="price fl">
+											<b>¥</b>
+											<strong>29.90</strong>
+										</p>
+										<p class="number fl">
+											销量<span>1110</span>
+										</p>
+									</div>
+								</li>
+								<li>
+									<div class="i-pic check">
+										<img src="__STATIC_imgage__/images/cp2.jpg" />
+										<p class="check-title">ZEK 原味海苔</p>
+										<p class="price fl">
+											<b>¥</b>
+											<strong>8.90</strong>
+										</p>
+										<p class="number fl">
+											销量<span>1110</span>
+										</p>
+									</div>
+								</li>
+								<li>
+									<div class="i-pic check">
+										<img src="__STATIC_imgage__/images/cp.jpg" />
+										<p class="check-title">萨拉米 1+1小鸡腿</p>
+										<p class="price fl">
+											<b>¥</b>
+											<strong>29.90</strong>
+										</p>
+										<p class="number fl">
+											销量<span>1110</span>
+										</p>
+									</div>
+								</li>
+<!-- 热点推荐列表  -->
+							</div>
+							<div class="clear"></div>
+
+							<!--分页 -->
+							<ul class="am-pagination am-pagination-right">
+								<li class="am-disabled"><a href="#">&laquo;</a></li>
+								<li class="am-active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+								<li><a href="#">&raquo;</a></li>
+							</ul>
+
+						</div>
+					</div>
+					<!--       底部             -->
+{include file="public/bottom"}

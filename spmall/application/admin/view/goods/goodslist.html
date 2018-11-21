@@ -1,0 +1,325 @@
+{include file="public/header"}
+<style type="text/css">
+.speclist_bj{
+  padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_delete{
+   padding: 5px;
+  border-radius: 5px;
+  color: #5D5A5A;
+  border: 1px solid #e0e0e0;
+  margin-left: 15px;
+}
+.speclist_bj:hover{
+  background-color: #009688;
+  color: white;
+  border: 1px solid #009688;
+  box-shadow: 2px 2px 2px #888888;
+}
+.speclist_delete:hover{
+  background-color: #FF5722;
+  color: white;
+  border: 1px solid #FF5722;
+  box-shadow: 2px 2px 2px #888888;
+}
+.tz_goods a:hover{
+  color: red;
+  text-decoration: underline;
+}
+.bbmm{
+  color: red;
+}
+</style>
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">商品分类</a>
+        <a>
+          <cite>商品列表</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+    <blockquote class="layui-elem-quote" style="color: #999999;">操作提示：商品属性是给用户看得，不牵涉价钱等，例如 生产日期，生产地保质期等</blockquote>
+      <div class="layui-row">
+        <form id="goodsFromList" class="layui-form layui-col-md12 x-so">
+          <input class="layui-input" value="{$start|date='Y-m-d',###}" placeholder="开始日" name="start" id="start">
+          <input class="layui-input" value="{$end|date='Y-m-d',###}" placeholder="截止日" name="end" id="end">
+          <div class="layui-input-inline">
+            <select name="brand">
+              <option value="">所有品牌</option>
+              {volist name="brand" id="br"}
+              <option value="{$br['brand_id']}" {if condition="$br['brand_id'] == $brandIs"}selected="selected"{/if}>{$br['brand_name']}</option>
+              {/volist}
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="catelist_one" lay-filter="catelist_one">
+              <option value="">一级分类</option>
+              {volist name="catelist_one" id="one"}
+                <option value="{$one['cate_id']}" {if condition="$one['cate_id'] == $catelist_one_id"}selected="selected"{/if}>{$one["cate_name"]}</option>
+              {/volist}
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="catelist_two" class="catelist_two" lay-filter="catelist_two">
+              <option value="" onclick="">二级分类</option>
+              {volist name="catelist_two" id="two"}
+                <option value="{$two['cate_id']}" {if condition="$two['cate_id'] == $catelist_two_id"}selected="selected"{/if}>{$two["cate_name"]}</option>
+              {/volist}
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="catelist_thr" class="catelist_thr">
+              <option value="">三级分类</option>
+              {volist name="catelist_thr" id="thr"}
+                <option value="{$thr['cate_id']}" {if condition="$thr['cate_id'] == $catelist_thr_id"}selected="selected"{/if}>{$thr["cate_name"]}</option>
+              {/volist}
+            </select>
+          </div>
+          <div class="layui-input-inline">
+            <select name="is_on_sale">
+              <option value="">上下架</option>
+              <option value="1" {if condition="1 == $is_on_sale"}selected="selected"{/if}>上架</option>
+              <option value="0" {if condition="0 == $is_on_sale && $is_on_sale != ''"}selected="selected"{/if}>下架</option>
+            </select>
+          </div>
+          <input type="text" name="Keyword" value="{$Keyword}" placeholder="请输入商品关键词" autocomplete="off" class="layui-input">
+          <button class="layui-btn" id="listgoods" lay-submit="jiansuogoods" onclick="return false" lay-filter="listgoods"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+      </div>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" onclick="admin_show()"><i class="layui-icon"></i>添加商品</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$datanum} 条</span>
+      </xblock>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            <th width="20px">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="60px">id</th>
+            <th width="230px">商品名称</th>
+            <th width="150px">货号</th>
+            <th width="100px">分类</th>
+            <th width="60px">价格</th>
+            <th width="30px">推荐</th>
+            <th width="30px">新品</th>
+            <th width="30px">热卖</th>
+            <th width="48px">上/下架</th>
+            <th width="48px">库存</th>
+            <th width="150px">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        <!--    循环输出商品    -->
+        {volist name="data" id="vo"}
+          <tr>
+            <td>
+              <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
+            </td>
+            <td>{$i}</td>
+            <td class="tz_goods"><a href="">{$vo.goods_name}</a></td>
+            <td>{$vo.goods_sn}</td>
+            <td>{$vo.cat_name}</td>
+            <td>{$vo.shop_price}</td>
+            <td><input type="checkbox" name="is_recommend" lay-skin="switch" data-id="{$vo.goods_id}" lay-filter="mi" value="{$vo.is_recommend}" {if condition="$vo.is_recommend == 1"}checked=""{/if} lay-text="开启|关闭"></td>
+            <td><input type="checkbox" name="is_new" lay-skin="switch" data-id="{$vo.goods_id}" lay-filter="mi" value="{$vo.is_new}" {if condition="$vo.is_new == 1"}checked=""{/if} lay-text="开启|关闭"></td>
+            <td><input type="checkbox" name="is_hot" lay-skin="switch" data-id="{$vo.goods_id}" lay-filter="mi" value="{$vo.is_hot}" {if condition="$vo.is_hot == 1"}checked=""{/if} lay-text="开启|关闭"></td>
+            <td><input type="checkbox" name="is_on_sale" lay-skin="switch" data-id="{$vo.goods_id}" lay-filter="mi" value="{$vo.is_on_sale}" {if condition="$vo.is_on_sale == 1"}checked=""{/if} lay-text="开启|关闭"></td>
+            <td class="{if condition='$vo.store_count eq 10'}bbmm{/if}" >{$vo.store_count}</td>
+            <td class="td-manage">
+              <a title="查看" class="speclist_bj"  onclick="x_admin_show('编辑','goods_add?goods_id={$vo.goods_id}',1100,800)" href="javascript:;">
+                <i class="layui-icon">&#xe63c;编辑</i>
+              </a>
+              <a title="删除" class="speclist_delete" onclick="member_del(this,{$vo.goods_id})" href="javascript:;">
+                <i class="layui-icon">&#xe640;删除</i>
+              </a>
+            </td>
+          </tr>
+          {/volist}
+        <!--    循环输出商品    -->
+
+
+        </tbody>
+      </table>
+<div style="text-align:center;" id="goodsListPage"></div>
+
+    </div>
+    <script>
+      layui.use(['form', 'laydate', 'layer', 'laypage'], function(){
+        var laydate = layui.laydate
+        ,form = layui.form
+        ,laypage = layui.laypage
+        ,layer = layui.layer;
+        
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+
+
+// var pcountInt = $("#test1").attr("data-num");
+var pcountInt = parseInt({$datanum}) ; //总数据
+var psizeInt= {$psizeIntablet}; //页面大小
+var pindex = {$pindex} ; //当前页
+var ptotalpages=Math.ceil(pcountInt/psizeInt);// 总记录数
+/****** 提交表单  *******/
+$('#listgoods').click(function(){
+  var dataList = $('#goodsFromList').serialize();
+  window.location.href="/admin/Goods/goodslist?"+encodeURI(dataList)+"&psizeInt="+psizeInt+"&pindex="+1;
+})
+
+  /********  分页  ********/
+
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'goodsListPage' //注意，这里的 test1 是 ID，不用加 # 号
+    ,count: pcountInt //数据总数，从服务端得到
+    ,limit:psizeInt
+    ,layout: ['limit', 'prev', 'page', 'next']
+    ,limits: [10, 20, 30, 100]
+    ,pages: ptotalpages //总页数
+    ,curr: pindex
+    ,jump: function (obj,first) {
+      if (!first) {
+   // var parId=$("#parId").val();
+   var pindex=obj.curr;
+  var dataList = $('#goodsFromList').serialize();
+   window.location.href="/admin/Goods/goodslist?"+encodeURI(dataList)+"&psizeInt="+obj.limit+"&pindex="+pindex;//跳转链接
+               }
+       }
+  });
+
+   /**   分类所需   */
+
+            form.on('select(catelist_one)', function(data){
+                /**-  异步传输获取子  - **/
+                if (data.value =='') {
+                        $('.catelist_two').html('');
+                        $('.catelist_thr').html('');
+                         form.render('select');
+                      $(".catelist_two").get(0).selectedIndex=0;
+                }else{
+                  $.ajax({
+                    type : 'post',
+                    url : '/admin/Goods/brandlist_sx',
+                    data : {data:data.value},
+                    dataType : 'json',
+                    success:function(data)
+                    {
+                      $('.catelist_two').html('');
+                      $('.catelist_thr').html('');
+                      for (var i = 0; i < data.length; i++) {
+                        var option = "<option value='"+data[i]['cate_id']+"'>"+data[i]['cate_name']+"</option>";
+                       $(".catelist_two").append(option);
+                      }
+                         form.render('select');
+                      $(".catelist_two").get(0).selectedIndex=0;
+                    },
+                    error:function(data)
+                    {
+                      layer.msg("选择出错");
+                    },
+                })
+                }
+                
+            })
+
+            form.on('select(catelist_two)', function(data){
+                /**-  异步传输获取子  - **/
+                if (data.value =='') {
+                        $('.catelist_thr').html('');
+                         form.render('select');
+                      $(".catelist_thr").get(0).selectedIndex=0;
+                }else{
+                  $.ajax({
+                    type : 'post',
+                    url : '/admin/Goods/brandlist_sx',
+                    data : {data:data.value},
+                    dataType : 'json',
+                    success:function(data)
+                    {
+                      $('.catelist_thr').html('');
+                      for (var i = 0; i < data.length; i++) {
+                        var option = "<option value='"+data[i]['cate_id']+"'>"+data[i]['cate_name']+"</option>";
+                       $(".catelist_thr").append(option);
+                      }
+                         form.render('select');
+                      $(".catelist_thr").get(0).selectedIndex=0;
+                    },
+                    error:function(data)
+                    {
+                      layer.msg("选择出错");
+                    },
+                })
+                }
+                
+            })
+
+      /***** 修改状态 ****/
+      form.on('switch(mi)', function(data){
+        var type = data.elem['name']; //得到radio原始DOM对象
+        var val = data.value == 0 ? 1 : 0;; //被点击的radio的value值
+        var id = $(this).attr('data-id');
+        $(this).attr('value',val);
+          $.ajax({
+              type : 'post',
+              url  : '/admin/Goods/ajaxgoodsUpSt',
+              data : {'id':id,'type':type,'val':val},
+              dataType : 'json',
+              success:function(data){
+                layer.msg(data['info']);
+              },
+              error:function(){
+                layer.msg("更新失败 :( ");
+              }
+          })
+      });  
+     
+      /***** 修改状态 ****/
+      });
+
+
+      // /*单个-删除*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              console.log(id);
+              // $(obj).parents("tr").remove();
+              layer.msg('已删除!',{icon:1,time:1000});
+          });
+      }
+
+      function admin_show(id)
+      {
+         x_admin_show('<sapn style="color:#999999;">商品基本信息设置</span>',"{:url('goods/goods_add')}",1100,800);
+      }
+
+      function delAll (argument) {
+
+        layer.msg("批量删除可能会出现数据混乱,并未开启");
+        // var data = tableCheck.getData();
+        // layer.confirm('确认要删除吗？'+data,function(index){
+        //     //捉到所有被选中的，发异步进行删除
+        //     layer.msg('删除成功', {icon: 1});
+        //     $(".layui-form-checked").not('.header').parents('tr').remove();
+        // });
+      }
+    </script>
+  </body>
+
+</html>

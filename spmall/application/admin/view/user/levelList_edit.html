@@ -1,0 +1,92 @@
+{include file="public/header"}
+<style type="text/css">
+.layui-input-block input{
+  float: left;
+  width: 150px;
+}
+.layui-input-block span{
+  height: 38px;
+  padding-left: 5px;
+  color: #999;
+  line-height: 38px;
+}
+</style>
+<body>
+<br>
+<form class="layui-form">
+  <div class="layui-form-item">
+    <label class="layui-form-label">等级名称</label>
+<div style="clear: bold;"></div>
+    <div class="layui-input-block">
+      <input type="text" name="lever_name" placeholder="请输入等级名称" value="{$lever['lever_name']}" class="layui-input">
+      <span>设置会员等级名称</span>
+    </div>
+  </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">等级lever</label>
+<div style="clear: bold;"></div>
+    <div class="layui-input-block">
+      <input type="text" name="lever_grade" placeholder="请输入等级" value="{$lever['lever_grade']}" class="layui-input">
+      <span>设置会员等级</span>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">消费额度</label>
+    <div class="layui-input-block">
+      <input type="text" name="lever_position" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="请输入消费额度" value="{$lever['lever_position']}" class="layui-input">
+      <span>消费额度,单位：元</span>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">折扣率</label>
+    <div class="layui-input-block">
+      <input type="text" name="lever_discount" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="请输入折扣率" value="{$lever['lever_discount']}" class="layui-input">
+      <span>折扣率单位为百分比，如输入90,以商品原价的90%购买</span>
+    </div>
+  </div>
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">等级描述</label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <textarea name="lever_desc" placeholder="请输入等级描述" class="layui-textarea desc">{$lever['lever_desc']}</textarea>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block" style="  width: 100%;">
+      <button class="layui-btn" lay-submit lay-filter="lerverSubmit" style="margin-left: 150px;">立即提交</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+
+layui.use('form',function(){
+  var form = layui.form;
+
+  form.on('submit(lerverSubmit)',function(data){
+    $.ajax({
+          type : 'post',
+          url  : '/admin/user/AjaxLeverLi',
+          data : {'data':JSON.stringify(data.field),'info':"{$lever['lever_grade']}"},
+          dataType : 'json',
+          success:function(data){
+             if (data['status'] == 0) {
+                   layer.msg(data['info'], {icon: 5},function () {});
+                }else{
+                   layer.msg(data['info'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+          },
+          error:function(data){
+            console.log(data);
+          }
+    })
+    return false;
+  })
+})
+
+</script>
+</body>
+</html>

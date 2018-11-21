@@ -1,0 +1,237 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">商品管理</a>
+        <a>
+          <cite>商品分类</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so layui-form-pane">
+          <input class="layui-input" placeholder="栏目名" name="cate_name">
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
+        </form>
+      </div>
+      <blockquote class="layui-elem-quote">提示：要删除一个整栏目首先要删除栏目下的子栏目，后台不做缓存</blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <span class="x-right" style="line-height:40px">共有数据：<?php echo count($list); ?> 条</span>
+      </xblock>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            <th width="20">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="70">ID</th>
+            <th>栏目名</th>
+            <th width="50">排序</th>
+            <th width="60">是否热门</th>
+            <th width="50">状态</th>
+            <th width="220">操作</th>
+        </thead>
+        <tbody class="x-cate">
+
+
+        <?php
+        $count = 1;
+          for($i = 0;$i < count($catelist[0]);$i++){
+          echo "<tr cate-id='".$catelist[0][$i]['cate_id']."' fid='0' >
+            <td>
+              <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='".$catelist[0][$i]['cate_id']."'><i class='layui-icon'>&#xe605;</i></div>
+            </td>
+            <td>".$count."</td>
+            <td style='line-height: 30px'>
+              <i class='layui-icon x-show' style='float: left;' status='true'>&#xe623;</i>
+              <input type='text' class='layui-input' style='width: 200px;float: left;height: 30px;' name='text' value='".$catelist[0][$i]['cate_name']."' cate_id='".$catelist[0][$i]['cate_id']."'>
+            </td>
+            <td><input type='text' class='layui-input x-sort' name='order' value='".$catelist[0][$i]['cate_order']."'></td>
+            <td>
+            <span class='hot' value='".$catelist[0][$i]['cate_id']."'><input type='checkbox' name='hot' lay-text='开启|关闭' lay-filter='hot' ";
+          if($catelist[0][$i]['cate_is_hot'] == 1){echo "checked=''";}
+            echo " lay-skin='switch'></span>
+            </td>
+            <td>
+            <span class='static' value='".$catelist[0][$i]['cate_id']."'><input type='checkbox' name='switch'  lay-text='开启|停用' ";
+          if($catelist[0][$i]['cate_static'] == 0){echo "checked=''";}
+            echo " lay-skin='switch'>
+            </span>
+            </td>
+            <td class='td-manage'>
+              <button class='layui-btn layui-btn layui-btn-xs'  onclick='edit_column(".$catelist[0][$i]['cate_id'].")' ><i class='layui-icon'>&#xe642;</i>编辑</button>
+              <button class='layui-btn layui-btn-warm layui-btn-xs' onclick='subsection(".$catelist[0][$i]['cate_id'].")'><i class='layui-icon'>&#xe642;</i>添加子栏目</button>
+              <button class='layui-btn-danger layui-btn layui-btn-xs'  onclick='member_del(this,".$catelist[0][$i]['cate_id'].")' href='javascript:;' ><i class='layui-icon'>&#xe640;</i>删除</button>
+            </td>
+          </tr>";
+     for($e = 0 ; $e < count($catelist[1]);$e++){
+        if(strpos(','.$catelist[1][$e]['parent_id_path'],$catelist[0][$i]['parent_id_path'])){
+        $count ++;
+        echo "<tr cate-id='".$catelist[1][$e]['cate_id']."' fid='".$catelist[0][$i]['cate_id']."' >
+                  <td>
+                    <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='".$catelist[1][$e]['cate_id']."'><i class='layui-icon'>&#xe605;</i></div>
+                  </td>
+                  <td>".$count."</td>
+                  <td style='line-height: 30px'>
+                   
+              <i class='layui-icon x-show' style='float: left;margin-left: 30px' status='true'>&#xe623;</i>
+              <input type='text' class='layui-input' style='width: 200px;float: left;height: 30px;' name='text' value='".$catelist[1][$e]['cate_name']."' cate_id='".$catelist[1][$e]['cate_id']."'>
+            </td>
+                  <td><input type='text' class='layui-input x-sort' name='order' value='".$catelist[0][$i]['cate_order']."'></td>
+                  <td>
+                   <span class='hot' value='".$catelist[1][$e]['cate_id']."'> <input type='checkbox' name='hot' lay-text='开启|关闭' ";
+          if($catelist[1][$e]['cate_is_hot'] == 1){echo "checked=''";}
+            echo " lay-skin='switch'>
+                    </span>
+                  </td>
+                  <td>
+                 <span class='static' value='".$catelist[1][$e]['cate_id']."'> <input type='checkbox' name='switch'  lay-text='开启|停用'";
+          if($catelist[1][$e]['cate_static'] == 0){echo "checked=''";}
+            echo "  lay-skin='switch'></span>
+                  </td>
+                  <td class='td-manage'>
+                    <button class='layui-btn layui-btn layui-btn-xs'  onclick='edit_column(".$catelist[1][$e]['cate_id'].")' ><i class='layui-icon'>&#xe642;</i>编辑</button>
+                    <button class='layui-btn layui-btn-warm layui-btn-xs'  onclick='subsection(".$catelist[1][$e]['cate_id'].")' ><i class='layui-icon'>&#xe642;</i>添加子栏目</button>
+                    <button class='layui-btn-danger layui-btn layui-btn-xs'  onclick='member_del(this,".$catelist[1][$e]['cate_id'].")' href='javascript:;' ><i class='layui-icon'>&#xe640;</i>删除</button>
+                  </td>
+                </tr>";
+                for($b = 0 ; $b < count($catelist[2]) ;$b++){
+            if(strpos(','.$catelist[2][$b]['parent_id_path'],$catelist[1][$e]['parent_id_path'])){
+             $count ++;
+             echo "<tr cate-id='".$catelist[2][$b]['cate_id']."' fid='".$catelist[1][$e]['cate_id']."' >
+                  <td>
+                    <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='".$catelist[2][$b]['cate_id']."'><i class='layui-icon'>&#xe605;</i></div>
+                  </td>
+                  <td>".$count."</td>
+                   <td style='line-height: 30px'>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <i class='layui-icon' style='float: left;margin-left: 60px' status='true'>├</i>
+              <input type='text' class='layui-input' style='width: 200px;float: left;height: 30px;' name='text' value='".$catelist[2][$b]['cate_name']."' cate_id='".$catelist[2][$b]['cate_id']."'>
+            </td>
+                  <td><input type='text' class='layui-input x-sort' name='order' value='".$catelist[0][$i]['cate_order']."'></td>
+                  <td>
+                   <span class='hot' value='".$catelist[2][$b]['cate_id']."'> <input type='checkbox' name='hot' id='hot'  lay-text='开启|关闭'";
+          if($catelist[2][$b]['cate_is_hot'] == 1){echo "checked=''";}
+            echo "  lay-skin='switch'></span>
+                  </td>
+                  <td>
+                 <span class='static' value='".$catelist[2][$b]['cate_id']."'> <input type='checkbox' name='switch'  lay-text='开启|停用'";
+          if($catelist[2][$b]['cate_static'] == 0){echo "checked=''";}
+            echo "  lay-skin='switch'></span>
+                  </td>
+                  <td class='td-manage'>
+                    <button class='layui-btn layui-btn layui-btn-xs' onclick='edit_column(".$catelist[2][$b]['cate_id'].")' ><i class='layui-icon'>&#xe642;</i>编辑</button>
+                    <button class='layui-btn-danger layui-btn layui-btn-xs'  onclick='member_del(this,".$catelist[2][$b]['cate_id'].")' href='javascript:;' ><i class='layui-icon'>&#xe640;</i>删除</button>
+                  </td>
+                </tr>";
+           }
+            }
+           }
+              
+          }
+$count ++;
+          }
+        ?>
+
+        </tbody>
+      </table>
+    </div>
+    <script>
+      layui.use(['form'], function(){
+        form = layui.form;
+      function repla()
+      {
+        javascript:location.replace(location.href);
+      }
+        //添加栏目
+         form.on('submit(sreach)', function(data){
+               $.ajax({
+                  type:'POST',
+                   url:"/admin/Goods/sreach",
+                  data : {'data':JSON.stringify(data.field)},
+                  dataType: 'json',
+                  success:function(data){
+                    var data = jQuery.parseJSON(data);
+                    if(data['static'] == 0){
+                       layer.msg(data['message'],function(){
+                          setInterval(repla(),2000);
+                      });
+                    }else{
+                      layer.msg(data['message'],function(){
+                       setInterval(repla(),2000);
+                      });
+                    }
+
+                  },
+               })
+                return false;
+          });
+     });
+
+      function re(){
+        parent.location.reload();
+      }
+      /*删除栏目*/
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $.ajax({
+                    type : 'POST',
+                    url : '/admin/Goods/del_column',
+                    data : {'type':'del','data':id},
+                    dataType : 'json',
+                    success:function(data){
+                      var data = jQuery.parseJSON(data);
+                      if (data['static'] == 0) {
+                        layer.msg(data['message'],{icon:1,time:1000});
+                      }else{
+                        $(obj).parents("tr").remove();
+                        layer.msg(data['message'],{icon:1,time:1000});
+                      }
+                  }
+              })
+          });
+      }
+      /*添加子栏目*/
+      function subsection(column){
+        x_admin_show('添加子栏目',"{:url('goods/subsection')}?column="+column,500);
+      }
+      /*编辑栏目*/
+      function edit_column(column){
+        x_admin_show('编辑栏目',"{:url('goods/edit_column')}?column="+column,500);
+      }
+      /*删除多个栏目*/
+      function delAll(argument) {
+
+        var data = tableCheck.getData();
+       layer.confirm('确认要删除吗？'+data,function(index){
+            //捉到所有被选中的，发异步进行删除
+            $.ajax({
+                    type : 'POST',
+                    url : '/admin/Goods/del_column',
+                    data : {'type':'delAll','data':JSON.stringify(data)},
+                    cache: false,
+                    dataType : 'json',
+                    success:function(data){
+                      var data = jQuery.parseJSON(data);
+                      if (data['static'] == 0) {
+                        layer.msg(data['message'],{icon:1,time:1000});
+                      }else{
+                        layer.msg('删除成功', {icon: 1});
+                        setInterval(repla(),2000);
+                        $(".layui-form-checked").not('.header').parents('tr').remove();
+                      }
+                  }
+              })
+            
+        });
+      }
+    </script>
+  </body>
+
+</html>

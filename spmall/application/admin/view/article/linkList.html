@@ -1,0 +1,149 @@
+{include file="public/header"}
+  
+  <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">文章管理</a>
+        <a>
+          <cite>友情链接</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so layui-form-pane">
+          <input class="layui-input" placeholder="友情链接名称" style="width: 200px;" name="cate_name">
+          <button class="layui-btn" onclick="return false" lay-submit="" lay-filter="linkCert"><i class="layui-icon"></i>增加</button>
+        </form>
+      </div>
+      <blockquote class="layui-elem-quote">提示：<span style="color: #A4A4A4;">友情链接的管理</span></blockquote>
+      <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$data|count} 条</span>
+      </xblock>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            <th width="20">
+              <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th width="5%">ID</th>
+            <th width="20%">名称</th>
+            <th width="28%">链接</th>
+            <th width="6%">排序</th>
+            <th width="6%">状态</th>
+            <th width="35%">操作</th>
+        </thead>
+        <tbody class="a-cate">
+
+      {volist name="data" id="link"}
+
+        <tr >
+            <td>
+              <div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='2'><i class='layui-icon'>&#xe605;</i></div>
+            </td>
+            <td>{$i}</td>
+            <td style='line-height: 30px'>
+              <input type='text' class='layui-input' style='width: 200px;float: left;height: 30px;' name='linkInput' data-name="link_name" data-id="{$link['link_id']}" value='{$link["link_name"]}'>
+            </td>
+            <td>
+              <input type='text' class='layui-input' style='width: 90%;float: left;height: 30px;' name='linkInput' data-name="link_url" data-id="{$link['link_id']}" value='{$link["link_url"]}'>
+            </td>
+            <td><input type='text' class='layui-input x-sort' onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')" name='linkInput' data-name="link_order" data-id="{$link['link_id']}" value='{$link["link_order"]}'></td>
+            <td>
+            <span>
+            <input type='checkbox' value="1" {if condition="$link['link_static'] == 1"}checked{/if} lay-text='开启|停用' lay-skin='switch' data-id="{$link['link_id']}" lay-filter="link_static">
+            </span>
+            </td>
+            <td>
+              <button class='layui-btn-danger layui-btn layui-btn-xs' data-index="{$link['link_id']}" onclick='member_del(this,{$link["link_id"]})' href='javascript:;' ><i class='layui-icon' disabled="disabled">&#xe640;</i>删除</button>
+            </td>
+          </tr>
+
+          {/volist}
+
+
+        </tbody>
+      </table>
+    </div>
+    <script>
+      layui.use(['form'], function(){
+        form = layui.form;
+        form.on('switch(link_static)', function(data){
+          var map = [];
+          map[0]= data.elem.checked == true ? 1:(data.elem.checked == false?0:"error");  //  第一个为值
+          map[1] = "link_static";   // 第二个为字段名
+          map[2] = $(this).attr('data-id');   //  第三个位id
+          map[3]= "update";  //  类型
+          ajaxMou(map);
+        })
+        form.on('submit(linkCert)', function(data){
+          var map = [];
+          map[0]= data.field.cate_name;  //  第一个为值
+          map[3]= "insert";  //  类型
+          ajaxMou(map);
+        })
+    })
+
+      $('input[name="linkInput"]').each(function(){
+        var map = [];
+        $(this).change(function(){
+          map[0] = $(this).val();   //  第一个为值
+          map[1] = $(this).attr('data-name');   // 第二个为字段名
+          map[2] = $(this).attr('data-id');   //  第三个位id
+          map[3]= "update";  //  类型
+          if (map[1] == "link_url") {
+            var reg =/[a-zA-z]+:\/\/[^\s]*/;
+            if (!reg.test(map[0])) {
+              layer.msg("链接格式有误");
+              return false;
+            }
+          }
+          ajaxMou(map);
+        })
+      })
+   
+      /*删除栏目*/
+      function member_del(obj,id){
+      var map = [];
+          layer.confirm('确认要删除吗？',function(index){
+          map[2] = id;   //  第三个位id
+          map[3]= "dalete";  //  类型
+          ajaxMou(map);
+              //发异步删除数据
+          });
+      }
+      function ajaxMou(map){
+
+              $.ajax({
+                type : 'post',
+                url  : '/admin/Article/ajaxlinkListMou',
+                data : {'data':JSON.stringify(map)},
+                dataType: 'json',
+                success:function(data){
+                    if (data['static'] == 0) {
+                        layer.msg(data['info']);
+                      }else{
+                       if (data['info'] == "delete") {
+                          $(obj).parents("tr").remove();
+                          layer.msg(data['info'],{icon:1,time:1000});
+                      }else if(data['info'] == "insert") {
+                          layer.msg(data['info'],function(){
+                            repla();
+                          });
+                        }else{
+                          layer.msg(data['info']);
+                        }
+                      }
+                },
+                error:function(data){
+                  layer.msg("更新出错 :( ");
+                }
+            })
+      }
+    </script>
+  </body>
+
+</html>

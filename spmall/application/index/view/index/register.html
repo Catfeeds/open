@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>注册</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+		<script src="__STATIC_index__/assets/js/jquery.min.js"></script>
+		<script src="__STATIC_index__/assets/js/amazeui.min.js"></script>
+		<script src="__STATIC_index__/static/register.js"></script>
+		<script src="__STATIC_index__/static/huadong.js"></script>
+		<link href="__STATIC_index__/css/buttom.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="__STATIC_index__/assets/css/amazeui.min.css" />
+		<link href="__STATIC_index__/css/dlstyle.css" rel="stylesheet" type="text/css">
+		<link href="__STATIC_index__/basic/css/demo.css" rel="stylesheet" type="text/css" />
+		 <style>
+		 .item_1 li a:hover{
+				color: #F60;
+			}
+		 .sendsmccode:hover{
+		 	color: red;
+		 }
+		 .sendsmccode{
+		 	padding: 5px;
+		 	line-height: 30px;
+		 	text-align: center;
+		 	cursor: pointer;
+		 	height: 40px;
+    		width: 50%;
+    		float: left;
+    		display: block;
+		 	color: #898989;
+		 }
+        .drag{
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            background-color: #e8e8e8;
+            position: relative;
+            margin:0 auto;
+        }
+        .bg{
+            width:40px;
+            height: 100%;
+            position: absolute;
+            background-color: #75CDF9;
+        }
+        .text{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            user-select: none;
+        }
+        .btnaa{
+            width:40px;
+            height: 40px;
+            position: absolute;
+            border:1px solid #ccc;
+            cursor: move;
+            font-family: "宋体";
+            text-align: center;
+            background-color: #fff;
+            user-select: none;
+            color:#666;
+        }
+        .hidden{
+        	font-size: 13px;
+        	color:red;
+        	display: none;
+        }
+        .email_re{
+        	font-size: 13px;
+        	color:red;
+        	display: none;
+        }
+       .mine_coupon_words  {
+		 	display: none;
+        	position:fixed;left: 48%;top: 50%;width: 130px;height: 40px;line-height: 40px;text-align: center;z-index: 999;background-color: rgba(0, 0, 0, 0.5);color: white;
+        }
+        @media screen and (max-width: 414px)  {
+    .mine_coupon_words {
+    top: 32%;
+    left: 40%
+}
+}
+
+    </style>
+	</head>
+
+	<body>
+
+		<div class="login-boxtitle">
+			<a href="home/demo.html"><img alt="" src="__STATIC_imgage__/images/logobig.png" /></a>
+		</div>
+
+		<div class="res-banner">
+			<div class="res-main">
+				<div class="login-banner-bg"><span></span><img src="__STATIC_imgage__/images/big.jpg" /></div>
+				<div class="login-box">
+
+						<div class="am-tabs" id="doc-my-tabs">
+							<ul class="am-tabs-nav am-nav am-nav-tabs am-nav-justify">
+								<li class="am-active" style="border-bottom: 0px;"><a href=""style="cursor: pointer;">邮箱注册</a></li>
+								<li style="border-bottom: 0px;cursor: pointer;"><a href="" style="cursor: pointer;">手机号注册</a></li>
+							</ul>
+
+							<div class="am-tabs-bd">
+								<div class="am-tab-panel am-active">
+									<form method="post">
+										
+							   <div class="user-email" style="border: 1px solid #e0e0e0;box-sizing:border-box;">
+										<label for="email" style="height: 38px;"><i class="am-icon-envelope-o"></i></label>
+										<input type="email" style="height: 40px;" name="email" id="email" placeholder="请输入邮箱账号">
+                 </div>		
+                 <div class="email_re">邮箱有误</div>								
+                 <div class="user-pass" style="border: 1px solid #e0e0e0;box-sizing:border-box;">
+								    <label for="password" style="height: 38px;"><i class="am-icon-lock"></i></label>
+								    <input type="password" style="height: 40px;" name="email_pwd" id="password" placeholder="设置密码">
+                 </div>	
+
+<!-- <span id="passstrength"></span> -->
+
+
+
+                 <div class="user-pass" style="border: 1px solid #e0e0e0;box-sizing:border-box;">
+								    <label for="passwordRepeat" style="height: 38px;"><i class="am-icon-lock"></i></label>
+								    <input type="password"  style="height: 40px;" name="email_con_pwd" id="passwordRepeat" placeholder="确认密码">
+                 </div>	
+                   <!--  验证码 -->   
+					<div class="user-yzm">
+						<input type="text" name="email_yzm" style="width: 100px;border: 1px solid #e0e0e0;height: 40px;padding: 0px;padding: 5px;float: left;" placeholder=" 请输入验证码">
+						<span style="width: 100px;height: 40px;background: red;display: block;float: left;margin-left: 50px;">
+							<img src="{:captcha_src()}" id="captcha" alt="captcha" onclick="javascript:this.src='{:captcha_src()}?rand='+Math.random()"" style="width: 100px;height: 40px;"/>
+						</span>
+					</div>
+             <div style="clear: both;"></div>
+                 
+                 </form>
+                 
+								 <div class="login-links">
+										<label for="reader-me">
+											<input id="reader-me" name="emaile_reader" type="checkbox"> 点击表示您同意商城《服务协议》
+										</label>
+							  	</div>
+										<div class="am-cf">
+											<input type="submit" name="email_register" value="注册" class="am-btn am-btn-primary am-btn-sm am-fl">
+										</div>
+
+								</div>
+			<!--  手机号  -->
+								<div class="am-tab-panel">
+									<form method="post">
+                 <div class="user-phone" style="border: 1px solid #e0e0e0;box-sizing:border-box;">
+								    <label for="phone" style="height: 38px;"><i class="am-icon-mobile-phone am-icon-md"></i></label>
+								    <input type="tel" style="height: 40px;" name="mobile" id="phone" placeholder="请输入手机号">
+                 </div>			
+					<!--  滑动验证码  -->
+<div class="drag">
+        <div class="bg"></div>
+        <div class="text" onselectstart="return false;">请拖动滑块解锁</div>
+        <div class="btnaa">&gt;&gt;</div>
+    </div>
+   <div class="hidden">请按住滑块拖到右边</div>
+   <script type="text/javascript">
+ function attr()
+        {
+            $("input[name='hidde']").attr('index','1');
+            $('.hidden').hide();
+        }
+   </script>
+<!--  滑动验证码 											<input type="button" style="height: 40px;width: 50%;" name="" disabled="true" class="sendsmccode" value="获取短信验证码" /> -->
+										<input type="hidden" name="hidde" index="0">
+										<div class="verification" style="border: 1px solid #e0e0e0;box-sizing:border-box;margin-top: 6px;">
+											<label for="code" style="height: 38px;"><i class="am-icon-code-fork"></i></label>
+											<input type="tel" style="height: 40px;width: 50%;float: left;" name="mobile_phone" id="code" placeholder="请输入验证码">
+											<span class="sendsmccode">获取短信验证码</span>
+
+										</div>
+                 <div class="user-pass" style="border: 1px solid #e0e0e0;box-sizing:border-box;">
+								    <label for="password" style="height: 38px;"><i class="am-icon-lock"></i></label>
+								    <input type="password" style="height: 40px;" name="mobile_pwd" id="password" placeholder="设置密码">
+                 </div>										
+                
+
+									</form>
+								 <div class="login-links">
+										<label for="reader-mea">
+											<input id="reader-mea" name="mobile_reader" type="checkbox"> 点击表示您同意商城《服务协议》
+										</label>
+							  	</div>
+										<div class="am-cf">
+											<input type="submit" name="mobile_register" value="注册" class="am-btn am-btn-primary am-btn-sm am-fl">
+										</div>
+								
+									<hr>
+								</div>
+
+								<script>
+									$(function() {
+									    $('#doc-my-tabs').tabs();
+									  })
+								</script>
+								<style type="text/css">
+									 a:hover
+										{
+										text-decoration: underline ;
+										color: #0881bf;
+										}
+								</style>
+						<span style="float: right;" class="register">我已注册，马上<a href="login" style="color: #0e90d2;">登录></a></span>
+							</div>
+						</div>
+				</div>
+			</div>
+			<br>
+					<div class="footer ">
+						<div class="footer-hd ">
+							<p>
+								<b>|</b>
+								<a href="# ">商城首页</a>
+								<b>|</b>
+								<a href="# ">支付宝</a>
+								<b>|</b>
+								<a href="# ">物流</a>
+							</p>
+						</div>
+						<div class="footer-bd ">
+							<p>
+								<a href="# ">合作伙伴</a>
+								<a href="# ">联系我们</a>
+								<a href="# ">网站地图</a>
+							</p>
+						</div>
+					</div>
+
+<div style="clear"></div>
+<div class="foot" id="foot">
+	<div class="foot_sm">
+
+			<ul>
+			<li>
+				<i class="i_1"></i>
+				<h3>自营保正品</h3>
+				<p>现货自营 正品保证</p>
+			</li>
+			<li>
+				<i class="i_2"></i>
+				<h3>全场免运费</h3>
+				<p>不限品类 满99免邮</p>
+			</li>
+			<li>
+				<i class="i_3"></i>
+				<h3>发货如闪电</h3>
+				<p>极速发货 航空直达</p>
+			</li>
+			<li>
+				<i class="i_4"></i>
+				<h3>退货有保障</h3>
+				<p>开箱验货 30天退换</p>
+			</li>
+			</ul>
+			<div class="clear"></div>
+
+		
+	</div>
+	<div class="bottom_link">
+		<div class="border_link">
+												<div class="item_1 fl">
+				<h3>用户指南</h3>
+				<ul>
+										<li><a href="http://localhost/shopping/index.php/article/5" title="购物指南">购物指南</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/6" title="支付方式">支付方式</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/7" title="常见问题">常见问题</a></li>
+									</ul>
+			</div>
+												<div class="item_1 fl">
+				<h3>配送方式</h3>
+				<ul>
+										<li><a href="http://localhost/shopping/index.php/article/8" title="配送时间及运费">配送时间及运费</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/9" title="验货与签收">验货与签收</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/10" title="订单查询">订单查询</a></li>
+									</ul>
+			</div>
+												<div class="item_1 fl">
+				<h3>支付方式</h3>
+				<ul>
+										<li><a href="http://localhost/shopping/index.php/article/17" title="货到付款">货到付款</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/18" title="在线支付">在线支付</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/19" title="邮局汇款">邮局汇款</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/20" title="公司转账">公司转账</a></li>
+									</ul>
+			</div>
+												<div class="item_1 fl">
+				<h3>售后服务</h3>
+				<ul>
+										<li><a href="http://localhost/shopping/index.php/article/11" title="售后政策">售后政策</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/12" title="退货说明">退货说明</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/13" title="取消订单">取消订单</a></li>
+									</ul>
+			</div>
+												<div class="item_1 fl">
+				<h3>关于我们</h3>
+				<ul>
+										<li><a href="http://localhost/shopping/index.php/article/14" title="公司简介">公司简介</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/15" title="联系我们">联系我们</a></li>
+										<li><a href="http://localhost/shopping/index.php/article/16" title="诚聘英才">诚聘英才</a></li>
+									</ul>
+			</div>
+						<div class="foot_telnum">
+				<p><span>123</span></p><br>
+				<span class="font14 cfen">周一 至 周五　8:30-18:00</span>
+				<div class="mat10" style="display: none;">
+				<div class="x_sm_text">扫扫有惊喜</div>
+				<div class="clear"></div>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="subnav">
+		Copyright <span class="num">©</span> 小小工作者 All Rights Reserved gcblli &nbsp;
+		Powered by <a href="http://www.phpshe.com" target="_blank" title="PHPSHE商城系统">phpshe1.6</a>
+	</div>
+</div>
+<div class="mine_coupon_words">玩命加载中。。</div>
+	</body>
+
+</html>
