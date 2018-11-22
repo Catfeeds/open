@@ -326,16 +326,18 @@ class User extends Base
 	// 提现申请
 	public function withdrawals(){
 		$nick = empty(input('get.nick'))?'':input('get.nick');
-		$stat = empty(input('get.stat'))?mktime(0,0,0,date('m'),date('d'),date('Y')):input('get.stat');
-		$endstat = empty(input('get.endstat'))?mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1:input('get.endstat');
+		$start = empty(input('get.start'))?mktime(0,0,0,date('m'),date('d'),date('Y')):strtotime(input('get.stat').' 00:00:00');
+		$end = empty(input('get.end'))?mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1000:strtotime(input('get.endstat').' 23:59:59');
+		dump($start);dump($end);
 		$limit = empty(input('get.limit'))?'10':input('get.limit'); // 页面大小
 		$curr = empty(input('get.curr'))?'1':input('get.curr');  // 当前页
+		
 		$data = Db::table('shop_user_withdrawals')
 				->alias('a')
 				->join('shop_user b','a.user_id = b.user_id')
 				->where('b.user_nick','like','%'.$nick.'%')
-				->where('a.is_time','>',$stat)
-				->where('a.is_time','<',$endstat)
+				->where('a.is_time','>',$start)
+				->where('a.is_time','<',$end)
 				->field('a.*,b.user_nick')
 				->page($curr,$limit)
 				->select();
@@ -345,8 +347,8 @@ class User extends Base
 					'curr'=>$curr,
 					'nick'=>$nick,
 					'datanum'=>count($data),
-					'start'=>time(),
-					'end'=>time(),
+					'start'=>$start,
+					'end'=>$end,
 			]);
 		return view('withdrawals');
 	}

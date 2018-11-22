@@ -151,7 +151,9 @@ function shenpin(){
   
   $(function(){
     $('#withdrawals').click(function(){
-      window.location.href = "/admin/User/withdrawals?nick="+$('.nick').val();
+      var start = $('#start').val();
+      var end = $('#end').val();
+      window.location.href = "/admin/User/withdrawals?nick="+$('.nick').val()+"&start="+start+"&end="+end;
     })
     $('#ShenpiSub').click(function(){
       alert('12345');
