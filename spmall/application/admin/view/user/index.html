@@ -163,14 +163,8 @@ switch(d['searchSelect']){
         return false;
      }
     break;
-
-     // default:
-     //    layer.msg("请选择检索的类型");
-     //    return false;
-     // break;
 }
-// /admin/User/index?limit="+obj.limit+"&curr="+curr+"&search="+"{$search}"+"&searchSelect="+"{$searchSelect}";//跳转链接
-  window.location.href = "/admin/user/index/?limit="+psizeInt+"&curr="+'1'+"&search="+d['id']+"&searchSelect="+d['searchSelect'];
+  window.location.href = "/admin/user/index/?limit="+psizeInt+"&curr="+'1'+"&search="+d['id']+"&searchSelect="+d['searchSelect'];//跳转链接
 })
 
   // 锁定
@@ -211,7 +205,6 @@ switch(d['searchSelect']){
     ,jump: function (obj,first) {
       if (!first) {
    var curr=obj.curr;
-   console.log(obj);
    window.location.href="/admin/User/index?limit="+obj.limit+"&curr="+curr+"&search="+"{$search}"+"&searchSelect="+"{$searchSelect}";//跳转链接
                }
        }

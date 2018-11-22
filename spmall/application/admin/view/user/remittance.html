@@ -1,0 +1,100 @@
+{include file="public/header"}
+<body>
+	<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">会员管理</a>
+        <a>
+          <cite>充值记录</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;用户充值记录列表, 由平台设置管理.</span>
+</blockquote>
+<br>
+
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+ <tr>
+    <td colspan="9">
+    <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
+<div class="demoTable" style="float: right;margin-right: 20px;">
+  <div class="layui-inline">
+    <input class="layui-input" value="" placeholder="请输出用户名" id="nick" autocomplete="off">
+  </div>
+  <button class="layui-btn" data-type="reload" id="remittance" lay-submit lay-filter="remittance">搜索</button>
+</div>
+    </td>
+  </tr>
+ <tr>
+    <td width="10%">id</td>
+    <td>用户名</td>
+    <td>账单</td>
+    <td>充值金额</td>
+    <td>类型</td>
+    <td>用户现总金额</td>
+    <td>后台充值的注释</td>
+    <td>时间</td>
+    <td width="20%">ip</td>
+  </tr>
+
+  {volist name="data" id="vo"}
+	 <tr>
+	    <td>{$vo['id']}</td>
+      <td>{$vo['user_nick']}</td>
+      <td>{$vo['buil']}</td>
+      <td>{$vo['money']}</td>
+      <td>{$vo['type']}</td>
+      <td>{$vo['user_money']}</td>
+      <td>{$vo['contents']}</td>
+      <td>{$vo['time']|date="Y-m-d h:i:s",###}</td>
+      <td>{$vo['ip']}</td>
+	  </tr>
+  {/volist}
+
+</table>
+<div id="list2"></div>
+<script>
+  
+   // 数据的集合
+var pcountInt = parseInt({$datanum}) ; //总数据
+var psizeInt= {$limit}; //页面大小
+var curr = {$curr}; //当前页
+var ptotalpages=Math.ceil(pcountInt/psizeInt);// 总记录数 
+
+  layui.use(['laypage','form'], function(){
+  var laypage = layui.laypage;
+  laypage.render({
+    elem: 'list2', // div的id号
+    count: pcountInt,  // 数据的总数，后端获取
+    limit: psizeInt,  // 分页
+    layout: ['count','prev','page','next','limit','refresh','skip'],
+    limits: [10,20,30,100],
+    pages: ptotalpages,
+    curr: curr,
+    jump:function(obj,first){
+      if (!first) {
+        var curr = obj.curr;
+        window.location.href = "/admin/user/remittance?limit="+obj.limit+"&curr="+curr+"&nick="+"{$nick}";
+      }
+    }
+  })
+}
+
+</script>
+<script>
+  
+  $(function(){
+    $('#remittance').click(function(){
+      window.location.href = "/admin/User/remittance?nick="+$('.nick').val();
+    })
+  })
+
+</script>
+
+</body>
+</html>

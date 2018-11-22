@@ -302,19 +302,84 @@ class User extends Base
 		return view('address');
 	}
 
-	// 充值记录
+	// 充值记录   只有查看，没有操作
 	public function recharge(){
-
+		$nick = empty(input('get.nick'))?'':input('get.nick');
+		$limit = empty(input('get.limit'))?'10':input('get.limit'); // 页面大小
+		$curr = empty(input('get.curr'))?'1':input('get.curr');  // 当前页
+		$data = Db::table('shop_user_recharge')
+				->alias('a')
+				->join('shop_user b','a.user_id = b.user_id')
+				->where('b.user_nick','like','%'.$nick.'%')
+				->field('a.*,b.user_nick')
+				->select();
+			$this->assign([
+					'data'=>$data,
+					'limit'=>$limit,
+					'curr'=>$curr,
+					'nick'=>$nick,
+					'datanum'=>count($data),
+			]);
+		return view('recharge');
 	}
 
 	// 提现申请
 	public function withdrawals(){
+		$nick = empty(input('get.nick'))?'':input('get.nick');
+		$stat = empty(input('get.stat'))?mktime(0,0,0,date('m'),date('d'),date('Y')):input('get.stat');
+		$endstat = empty(input('get.endstat'))?mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1:input('get.endstat');
+		$limit = empty(input('get.limit'))?'10':input('get.limit'); // 页面大小
+		$curr = empty(input('get.curr'))?'1':input('get.curr');  // 当前页
+		$data = Db::table('shop_user_withdrawals')
+				->alias('a')
+				->join('shop_user b','a.user_id = b.user_id')
+				->where('b.user_nick','like','%'.$nick.'%')
+				->where('a.is_time','>',$stat)
+				->where('a.is_time','<',$endstat)
+				->field('a.*,b.user_nick')
+				->page($curr,$limit)
+				->select();
+			$this->assign([
+					'data'=>$data,
+					'limit'=>$limit,
+					'curr'=>$curr,
+					'nick'=>$nick,
+					'datanum'=>count($data),
+					'start'=>time(),
+					'end'=>time(),
+			]);
+		return view('withdrawals');
+	}
 
+	// 提现详情
+	public function WithdList(){
+		$id = input('get.id');
+			$data = Db::table('shop_user_withdrawals')
+				->where('id',$id)
+				->select();
+			$this->assign('data',$data);
+		return view('withdrawalslist');
 	}
 
 	// 汇款记录
 	public function remittance(){
-
+		$nick = empty(input('get.nick'))?'':input('get.nick');
+		$limit = empty(input('get.limit'))?'10':input('get.limit'); // 页面大小
+		$curr = empty(input('get.curr'))?'1':input('get.curr');  // 当前页
+		$data = Db::table('shop_user_remittance')
+				->alias('a')
+				->join('shop_user b','a.user_id = b.user_id')
+				->where('b.user_nick','like','%'.$nick.'%')
+				->field('a.*,b.user_nick')
+				->select();
+			$this->assign([
+					'data'=>$data,
+					'limit'=>$limit,
+					'curr'=>$curr,
+					'nick'=>$nick,
+					'datanum'=>count($data),
+			]);
+		return view('remittance');
 	}
 
 	// 会员签到

@@ -390,9 +390,6 @@ class JxMiun
                     $da['info'] = "冻结的资金不足！！";
                     break;
                 }
-              //      var_dump($da);
-              // // var_dump($revision_frozen_money);
-              // die;
                $rfm = Db('shop_user')->where('user_id',$data['id'])->update(['user_frozen_money' => $revision_frozen_money]);
             }
               $d = Db('shop_user')->where('user_id',$data['id'])->update(['user_money' => $user_money,'user_pay_points' => $user_pay_points]);
