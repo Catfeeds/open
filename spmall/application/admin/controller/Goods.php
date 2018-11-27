@@ -969,8 +969,6 @@ function attribute_index(Request $request){
 		//  传输过来的是商品规格id
 		$Goods_data = new Goods_data();
 		$html = $Goods_data->GetgoodsSpend($request->get('data'));
-		// $attr = Db::table('shop_goods_attribute')->where('type_id',$request->get('data'))->select();
-		// var_dump($attr);die;
 		$this->ajaxReturn('0',$html,'0');
 
 	}

@@ -232,7 +232,7 @@ $('#listgoods').click(function(){
                     },
                     error:function(data)
                     {
-                      layer.msg("选择出错");
+                      layer.msg(data.statusText);
                     },
                 })
                 }

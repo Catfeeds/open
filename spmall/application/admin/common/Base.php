@@ -23,6 +23,12 @@ class Base extends Controller
 		//define('user', $user);
 	}
   
+
+  // 权限类
+  public function auth(){
+    return true;
+  }
+
 	protected function ajaxReturn($data,$type='') {
     if(func_num_args()>2) {// 兼容3.0之前用法
       $args      =  func_get_args();

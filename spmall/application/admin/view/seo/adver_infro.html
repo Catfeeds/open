@@ -1,0 +1,166 @@
+{include file="public/header"}
+<body>
+	<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">运营管理</a>
+        <a>
+          <cite>广告位置</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;广告位置列表, 由平台设置管理.</span>
+</blockquote>
+<br>
+
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+ <tr>
+    <td colspan="11">
+  <button class="layui-btn" data-type="reload" onclick="ajaxtc(this,0,'添加广告','/admin/seo/adverIae')" lay-submit lay-filter="adverI">添加</button>
+    <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
+
+<div class="demoTable layui-form" style="float: right;margin-right: 20px;">
+  <div class="layui-inline">
+    <input class="layui-input" value="{$start|date='Y-m-d',###}" placeholder="开始日" name="start" id="start">
+  </div>
+  <div class="layui-inline">
+    <input class="layui-input" value="{$end|date='Y-m-d',###}" placeholder="截止日" name="end" id="end">
+  </div>
+  <button class="layui-btn" data-type="reload" id="adverI" lay-submit lay-filter="adverI">搜索</button>
+</div>
+    </td>
+  </tr>
+ <tr>
+    <td width="6%">id</td>
+    <td>广告位</td>
+    <td>广告名称</td>
+    <td>广告图片</td>
+    <td width="10%">点击率（点击/展现）</td>
+    <td>跳转链接</td>
+    <td>广告显示时间</td>
+    <td>广告权重</td>
+    <!-- <td>添加水印</td> -->
+    <td>状态</td>
+    <td width="10%">操作</td>
+  </tr>
+
+  {volist name="data" id="vo"}
+	 <tr>
+      <td>{$vo['adver_name']}</td>
+      <td>{$vo['adver_infro_name']}</td>
+      <td><img src="{$vo['adver_infro_img']}" alt="点击查看大图"></td>
+      <td>{$vo['adver_infro_click']}</td>
+      <td>{$vo['adver_infro_link']}</td>
+      <td>{$vo['adver_infro_rasetime']|date="Y-m-d h:i:s",###} ~ {$vo['adver_infro_endtime']|date="Y-m-d h:i:s",###}</td>
+      <td>{$vo['adver_infro_weight']}</td>
+      <!-- <td>{$vo['adver_infro_open_watemark'] == 0?"开启":"关闭"}</td> -->
+      <td>{$vo['adver_infro_static'] == 0?"开启":"关闭"}</td>
+      <td>
+         <a class="layui-btn layui-btn-primary layui-btn-xs" style="height: 25px;" lay-event="detail" onclick="ajaxaAiadd(this,{$vo['adverI_id']})">修改内容</a>
+        
+      <a class="layui-btn layui-btn-xs" style="height: 25px;" onclick="ajaxaidel(this,{$vo['adverI_id']})" lay-event="delete">删除</a>
+      </td>
+	  </tr>
+  {/volist}
+</table>
+<input type="hidden" class="hidden_data_id" id="hidden_data_id" >
+<div id="list2" style="text-align: center;"></div>
+<script>
+  /**************************************************************************/
+
+function ajaxaidel(obj,id){
+  if ($(obj).attr('lay-event') == "delete") {
+    layer.confirm('您确定要删除这条数据吗？', {
+      btn: ['确定','取消'] //按钮
+      }, function(){
+        $.ajax({
+          type: "post",
+          url: "/admin/seo/adverIAjaxData",
+          data: {"id":id,"type":"del"},
+          success:function(data){
+            var data = jQuery.parseJSON(data);
+            console.log(data['status']);
+            if (data['status'] == 0) {
+              layer.msg(data['info'],function(){
+                layer.closeAll('dialog'); 
+            });
+              return false;
+            }
+            layer.msg(data['info'],function(){
+            $(obj).parent('td').parent('tr').remove();
+              layer.closeAll('dialog'); 
+            });
+         },error:function(){
+            layer.msg("网络出错！！！");
+         }
+       });
+  });
+
+    return false;
+  }
+  }
+  /**************************************************************************/
+  $(function(){
+    $('#adverI').click(function(){
+
+      var start = $('#start').val();
+      var end = $('#end').val();
+        window.location.href = "/admin/seo/adverI_infro?limit="+{$limit}+"&curr="+{$curr}+"&start="+start+"&end="+end;
+    })
+  })
+
+  /************************************************************************/
+   // 数据的集合
+var pcountInt = parseInt({$datanum}) ; //总数据
+var psizeInt= {$limit}; //页面大小
+var curr = {$curr}; //当前页
+var ptotalpages=Math.ceil(pcountInt/psizeInt);// 总记录数 
+
+
+  layui.use(['laypage','form','layer','laydate'], function(){
+  var laypage = layui.laypage,
+  layer = layui.layer,
+  laydate = layui.laydate;
+
+//执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+// 分页组件
+  laypage.render({
+    elem: 'list2', // div的id号
+    count: pcountInt,  // 数据的总数，后端获取
+    limit: psizeInt,  // 分页
+    layout: ['count','prev','page','next','limit','refresh','skip'],
+    limits: [10,20,30,100],
+    pages: ptotalpages,
+    curr: curr,
+    jump:function(obj,first){
+      if (!first) {
+        var curr = obj.curr;
+      var start = $('#start').val();
+      var end = $('#end').val();
+        window.location.href = "/admin/seo/adverI_infro?limit="+obj.limit+"&curr="+curr+"&start="+start+"&end="+end;
+      }
+    }
+  })
+// 上传组件
+   
+}); 
+
+
+
+</script>
+
+</body>
+</html>

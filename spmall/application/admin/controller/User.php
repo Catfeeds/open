@@ -6,6 +6,7 @@ use app\common\redis\RedisClice;
 use app\admin\model\JxMiun;
 use think\Db;
 use think\Config;
+use think\Request;
 
 /**
 * 
@@ -326,12 +327,11 @@ class User extends Base
 	// 提现申请
 	public function withdrawals(){
 		$nick = empty(input('get.nick'))?'':input('get.nick');
-		$start = empty(input('get.start'))?mktime(0,0,0,date('m'),date('d'),date('Y')):strtotime(input('get.stat').' 00:00:00');
-		$end = empty(input('get.end'))?mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1000:strtotime(input('get.endstat').' 23:59:59');
-		dump($start);dump($end);
+		$start = empty(input('get.start'))?mktime(0,0,0,date('m'),date('d'),date('Y')):strtotime(input('get.start').' 00:00:00');
+		$end = empty(input('get.end'))?mktime(0,0,0,date('m'),date('d')+1,date('Y'))-1000:strtotime(input('get.end').' 23:59:59');
 		$limit = empty(input('get.limit'))?'10':input('get.limit'); // 页面大小
 		$curr = empty(input('get.curr'))?'1':input('get.curr');  // 当前页
-		
+		// dump();
 		$data = Db::table('shop_user_withdrawals')
 				->alias('a')
 				->join('shop_user b','a.user_id = b.user_id')
@@ -354,13 +354,76 @@ class User extends Base
 	}
 
 	// 提现详情
-	public function WithdList(){
+	public function withdList(){
 		$id = input('get.id');
-			$data = Db::table('shop_user_withdrawals')
-				->where('id',$id)
-				->select();
+		$data = Db::table('shop_user_withdrawals')
+				->alias('a')
+				->join('shop_user b','a.user_id = b.user_id')
+				->where('a.user_id',$id)
+				->field('a.*,b.user_nick')
+				->find();
 			$this->assign('data',$data);
-		return view('withdrawalslist');
+		return view('withdrawals_edit');
+	}
+
+	// 提现的修改函数
+	public function withdupdate(Request $request){
+		if (input('post.type') == 'shenpiyz' && empty(input('post.type'))) {
+			$id = input('post.id');
+			$is_shenpin = input('post.shenpi');
+			$shenpin_czsm = input('post.bname_text');
+			if (is_numeric($id) && is_numeric($is_shenpin)) {
+				$update = ['is_shenpin'=>$is_shenpin,
+							'shenpin_czsm'=>$shenpin_czsm,
+							'shenpin_time'=>time(),
+							'is_withdrawals'=>$is_shenpin == 1?2:3];
+
+				$i = Db('shop_user_withdrawals')
+						->where('id',$id)
+						->where('is_shenpin','NEQ','1')
+						->update($update);
+				if ($i) {
+					return ['status'=>1,'msg'=>'审批成功'];
+				}else{
+					return ['status'=>0,'msg'=>'提交失败'];
+				}
+			}else{
+				return ['status'=>0,'msg'=>'参数错误'];
+			}
+
+		}else if (!empty(input('post.id'))){
+			$file = request()->file('file');
+			if (!is_numeric(input('post.id'))) {
+	            // 上传失败获取错误信息
+	            $reubfo['code']= 0;
+	            $reubfo['err'] = "参数错误";
+			}
+			$info = $file->move(ROOT_PATH . 'public' . DS . 'static' . DS . 'image' . DS . 'user' . DS . 'withdup/');
+			$savename = "/static/image/user/withdup/".substr($info->getSaveName(), 0,8).'/'.substr($info->getSaveName(),9);
+	        $reubfo = array();  //定义一个返回的数组
+	        if($info){
+				$i = Db('shop_user_withdrawals')
+					->where('id',input('post.id'))
+					->where('is_withdrawals',2)
+					->update([
+						'is_withdrawals'=>1,
+						'zhuanzhang_img'=>$savename,
+						'is_withdrawals_time'=>time(),
+						]);
+				if (!$i) {
+		            $reubfo['code']= 0;
+		            $reubfo['err'] = "提交出错！！";
+				}else{
+		            $reubfo['code']= 1;
+		            $reubfo['err'] = "操作成功";
+				}
+	        }else{
+	            // 上传失败获取错误信息
+	            $reubfo['code']= 0;
+	            $reubfo['err'] = $file->getError();
+	        }
+	        return $reubfo;
+		}
 	}
 
 	// 汇款记录

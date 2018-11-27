@@ -33,19 +33,18 @@
                      'address'=>'收货地址',
                      'recharge'=>'充值记录',   
                      'withdrawals'=>'提现申请',     
-                     'remittance'=>'汇款记录',       
+                     //'remittance'=>'汇款记录',       
                      'signList'=>'会员签到',          
          	      )
                ),        
-              'admin/ad'=>array(
-                'name' =>'广告管理',
+              'admin/seo'=>array(
+                'name' =>'运营管理',
                 'action'=>array(
-                     'adList'=>'广告列表',
-                     'edit'=>'编辑广告',
-                     'ad'=>'新增广告',
-                     'adList'=>'广告列表',
-                     'positionList'=>'广告位置',
-                     'position'=>'编辑广告位',                     
+                     'adver'=>'广告版位',
+                     'adver_infro'=>'广告管理', 
+                     'coupon'=>'优惠券列表', 
+                     'bannerimg'=>'首页海报',   
+                     'kefu'=>'在线客服',                 
          	      )
                ),        
               'admin/article'=>array(
@@ -79,24 +78,16 @@
                      'templatelist'=>'模板选择',                     
          	      )
                ),       
- 	'admin/configTemplate'=>array(
-	   'name'=>'配置管理',
-	   'action'=>array(
-		'supplierConfig'=>'供应商管理',
-		'poatconfig'=>'运费配置',
-		'emeimpor'=>'短信配置',
-		'emeconfig'=>'短信模板配置',
-		'emailConfig'=>'邮箱配置',
-                   )
-	),         
-              'admin/coupon'=>array(
-                'name' =>'优惠券管理',
-                'action'=>array(
-                     'index'=>'优惠券列表',
-                     'add_coupon'=>'添加优惠券',
-                     'edit_coupon'=>'编辑优惠券',
-         	      )
-               ),
+             	'admin/configTemplate'=>array(
+            	   'name'=>'配置管理',
+            	   'action'=>array(
+            		'supplierConfig'=>'供应商管理',
+            		'poatconfig'=>'运费配置',
+            		'emeimpor'=>'短信配置',
+            		'emeconfig'=>'短信模板配置',
+            		'emailConfig'=>'邮箱配置',
+                  )
+            	),     
               'admin/wechat'=>array(
                 'name' =>'微信管理',
                 'action'=>array(
@@ -164,7 +155,7 @@
                 'name' =>'系统设置',
                 'action'=>array(
                      'index'=>'网站设置',    
-					 'welcome'=>'404页面',        					 
+					           'welcome'=>'404页面',        					 
                      'navigationList'=>'导航设置',
                      'menu'=>'菜单管理',
                      'module'=>'模块管理',

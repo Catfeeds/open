@@ -1,0 +1,242 @@
+﻿{include file="public/header"}
+  <style type="text/css">
+    .layui-form-item label{
+      width: 100px;
+    }
+    .layui-input-inline input{
+      /*width: 320px;*/
+    }
+  </style>
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+<!-- *****************************广告名称*********************************** -->
+          <div class="layui-form-item">
+              <label for="adver__infro_name" class="layui-form-label">
+                  <span class="x-red">*</span>广告名称
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" name="adver__infro_name" value="{$data['adver__infro_name']}" 
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+<!-- ***********************广告位***************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_id" class="layui-form-label">
+                  <span class="x-red">*</span>广告位
+              </label>
+              <div class="layui-input-inline">
+                  <select name="adver" lay-verify="required" lay-filter="adver">
+                        <option value="0">请选择广告位</option>
+                    {volist name="adver" id="ad"}
+                        <option data-id="{$ad['adver_id']}" value="{$ad['adver_specif']}">{$ad['adver_name']}</option>
+                    {/volist}
+                  </select>
+              </div>
+          </div>
+
+          <div class="layui-form-item">
+              <label for="adver_id" class="layui-form-label">
+              </label>
+              <div class="layui-input-inline" id="chicun" style="width: 380px;color: #999999">
+                  请选择广告位
+              </div>
+          </div>
+<!-- **********************广告图************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_message" class="layui-form-label">
+                  <span class="x-red">*</span>广告图
+              </label>
+              <div class="layui-input-inline">
+                  <button type="button" class="layui-btn test1" disabled="true" id="test1">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                  </button>
+                  <br><br>
+                  <a class="adver_infro_img_a" href="javascript:void('0')" target="_blank"><img data-src="" class="adver_infro_img" src=""/></a>
+              </div>
+          </div>
+
+  
+          <div class="layui-form-item">
+              <label for="" class="layui-form-label">
+                  
+              </label>
+              <div class="layui-input-inline" id="chicunsc" style="width: 380px;color: #999999">
+                  请选择广告位再添加图片，规格为尺寸： *  图片规定规格
+              </div>
+          </div>
+<!-- ********************跳转链接***************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_infro_link" class="layui-form-label">
+                  跳转链接
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" name="adver_infro_link" value="{$data['adver_infro_link']}"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+<!-- ********************广告权重***************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_infro_weight" class="layui-form-label">
+                  <span class="x-red">*</span>广告权重
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" lay-verify="required" name="adver_infro_weight" value="{$data['adver_infro_weight']}"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+
+          <div class="layui-form-item">
+              <label for="adver_infro_weight" class="layui-form-label">
+                  
+              </label>
+              <div class="layui-input-inline" style="width: 380px;color: #999999">
+                  用户提醒显示的位置（例如：商品搜索的子页）
+              </div>
+          </div>
+<!-- ********************是否显示***************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_infro_link" class="layui-form-label">
+                  <span class="x-red"></span>是否显示
+              </label>
+              <div class="layui-input-inline">
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="adver_infro_static" lay-skin="switch" lay-text="ON|OFF" checked>
+              </div>
+          </div>
+
+<!-- *************************广告时间************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_specif" class="layui-form-label">
+                  <span class="x-red">*</span>广告时间
+              </label>
+              <div class="layui-input-inline" style="width: 180px;">
+                   <input class="layui-input" style="width: 180px;" placeholder="开始日" name="start" id="start">
+              </div>
+              <div class="layui-input-inline" style="width: 5px;text-align: center;font-weight: bold;height: 38px;line-height: 38px;">-</div>
+              <div class="layui-input-inline" style="width: 180px;">
+                  <input class="layui-input" style="width: 180px;" placeholder="截止日" name="end" id="end">
+              </div>
+          </div>
+          <!-- ******************************************************************* -->
+          <br>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  添加  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+
+    function indextest(obj){
+        if ($(obj).attr('id') == '') {
+          layer.msg("请选择广告位");
+        }
+    }
+       
+        layui.use(['form','layer','laydate','upload'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer
+          ,laydate = layui.laydate
+          ,upload = layui.upload;
+          //刷新页面
+          function repla()
+                {
+                  parent.location.reload();
+                }
+
+           // 时间实力
+        laydate.render({
+          elem: '#start' //指定元素
+          ,type: 'datetime'
+        });
+
+        // 时间
+        laydate.render({
+          elem: '#end' //指定元素
+          ,type: 'datetime'
+        });     
+          //监听提交
+          form.on('submit(add)', function(data){
+            var datalist = jQuery.parseJSON(JSON.stringify(data.field));
+            console.log(datalist);
+            // if (datalist['adver_name'] == ''||datalist['adver_position'] == ''||datalist['adver_specif0'] == ''||datalist['adver_specif1'] == '') {
+            //   layer.msg('请填写完整信息');
+            //   return false;
+            // }
+            // //发异步，把数据提交给php
+            // $.ajax({
+            //   type : 'post',
+            //   url : '/admin/seo/adverAjaxData',
+            //   data : {'data':JSON.stringify(data.field),'type':'ined','id':'{$id}'},
+            //   dataType: 'json',
+            //   success:function(data){  //成功的回调函数
+            //     if (data['core'] == 0) {
+            //        layer.msg(data['message'], {icon: 5},function () {});
+            //   }else{
+            //        layer.msg(data['message'], {icon: 6},function () {
+            //         // 获得frame索引
+            //           var index = parent.layer.getFrameIndex(window.name);
+            //           //关闭当前frame
+            //           parent.layer.close(index);
+            //           setInterval(repla(),2000);});
+            //       }
+            //   },
+            //   error:function(){
+            //     layer.msg("请求出错，请检查是否网络问题！！！");
+            //   }
+            // })
+            // return false;
+          });
+
+          /************************/
+    form.on('select(adver)', function(data){
+      if (data.value == 0) {
+          $("#test1").attr('disabled','true');
+      }else{
+          $("#test1").removeAttr('disabled');
+      }
+      $('#chicun').html("此广告位的尺寸大小位："+data.value);
+      $('#chicun').attr('data-cc',data.value);
+      $('#chicunsc').html("规格为尺寸："+data.value+" 图片规定规格");
+    });     
+    // 上传组件
+    var uploadInst = upload.render({
+      elem: '#test1' //绑定元素
+      ,url: '/admin/seo/uploadImg/' //上传接口
+      ,data:{
+          "type":"adver_infro",
+          "url":"adver\\adver_infro",
+          cc: function(){
+               return $('#chicun').attr('data-cc');
+      }}
+      ,accept: 'images'  // 限制上传的类型
+      ,acceptMime: 'image/jpg, image/png'  //（只显示 jpg 和 png 文件）
+      ,before: function(obj){ //上传前回调。
+        layer.load(); //上传loading
+      }
+      ,done: function(res){
+        //上传完毕回调
+        layer.msg(res.msg);
+        var url = "http://"+"{$_SERVER['HTTP_HOST']}/"+res.url.replace(/\\/g,"/");
+        $('.adver_infro_img').attr('src',url);
+        $('.adver_infro_img').attr('data-src',res.url.replace(/\\/g,"/"));
+        $('.adver_infro_img').css('width',"500px");
+        $('.adver_infro_img').css('height',"333px");
+        $('.adver_infro_img_a').attr('href',url);
+        layer.closeAll('loading'); //关闭loading
+      }
+      ,error: function(){
+        //请求异常回调
+        layer.closeAll('loading'); //关闭loading
+      }
+    });
+          
+        });
+    </script>
+  </body>
+
+</html>

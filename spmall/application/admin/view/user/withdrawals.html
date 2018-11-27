@@ -20,7 +20,7 @@
 
 <table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
  <tr>
-    <td colspan="10">
+    <td colspan="11">
     <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
 <div class="demoTable layui-form" style="float: right;margin-right: 20px;">
   <div class="layui-inline">
@@ -45,7 +45,8 @@
     <td>审批</td>
     <td>提现</td>
     <td>提现说明</td>
-    <td>时间</td>
+    <td>上传截图</td>
+    <td>申请时间</td>
     <td width="20%">操作</td>
   </tr>
 
@@ -55,21 +56,24 @@
       <td>{$vo['user_nick']}</td>
       <td>{$vo['bill']}</td>
       <td>{$vo['money']}</td>
-      <td>{$vo['type']}</td>
-      <td>{$vo['is_shenpin']}</td>
-      <td>{$vo['is_withdrawals']}</td>
+      <td>{$vo['type'] == 1?'支付宝':($vo['type'] == 2?'微信':'银行卡')}</td>
+      <td style="color: red;">{$vo['is_shenpin'] == 1?'审批通过':($vo['is_shenpin'] == 2?'审批未通过':'未审批')}</td>
+      <td style="color: blue;">{$vo['is_withdrawals'] == 1?'已提现':($vo['is_withdrawals'] == 2?'待提现':'待审批')}</td>
       <td>{$vo['tixain_shuoming']}</td>
+      <td><a target="_blank" href="{$vo['zhuanzhang_img']}" ><img style="width: 32px;" src="{$vo['zhuanzhang_img']}"></a></td>
       <td>{$vo['is_time']|date="Y-m-d h:i:s",###}</td>
       <td>
-         <a class="layui-btn layui-btn-primary layui-btn-xs" {if condition="$vo['is_shenpin'] == 2"} onclick="ajaxShenpin(this,{$vo['id']})"{else /} onclick="shenpin()"
+         <a class="layui-btn layui-btn-primary layui-btn-xs" style="height: 25px;" {if condition="$vo['is_shenpin'] != 1"} onclick="ajaxShenpin(this,{$vo['id']})"{else /} onclick="shenpin()"
          {/if} lay-event="detail">通过审批</a>
-      <a class="layui-btn layui-btn-xs" onclick="ajaxWithdList(this,{$vo['id']})" lay-event="capital">查看详情</a>
+         <a class="layui-btn layui-btn-xs" style="background: #FF5722;height: 25px;" data-id="{$vo['id']}" onclick="clickjietu({$vo['id']})" lay-event="capital">上传打款截图</a>
+         <input type="hidden" class="hidden_jietu"  id="test1" >
+      <a class="layui-btn layui-btn-xs" style="height: 25px;" onclick="ajaxWithdList(this,{$vo['id']},{$vo['is_shenpin']})" lay-event="capital">查看详情</a>
       </td>
 	  </tr>
   {/volist}
-
 </table>
-<div id="list2"></div>
+<input type="hidden" class="hidden_data_id" id="hidden_data_id" >
+<div id="list2" style="text-align: center;"></div>
 <script>
   
    // 数据的集合
@@ -82,20 +86,43 @@ function shenpin(){
   layer.msg('已经审批了，请去提现给用户！！');
 }
 
+function clickjietu(id){
+  $('#hidden_data_id').attr('data-id',id);
+  $('#test1').trigger('click');
+}
  function subForm(){
-            var bname=$("#text").val();
+            var bname_text=$("#text").val();
             var shenpi=$("input[name='shenpi']:checked").val();
-
+            var id = $('#shenpiid').val();
+            if ((shenpi == 1?false:(shenpi == 2?false:true))||bname_text == '') {
+              layer.msg('请填写号内容');
+              return false;
+            }
+            $.ajax({
+                type : 'POST',
+                url  : '/admin/User/withdupdate/',
+                data : {bname_text:bname_text,shenpi:shenpi,id:id,type:'shenpiyz'},
+                dataType : 'json',
+                success:function(data){
+                  console.log(data);
+                  layer.msg(data.msg);
+                },
+                error:function(data){
+                  layer.msg(data.statusText);
+                }
+            })
           }
   /**
        * 弹出一个输入框，输入审批内容，以及审批的结果
        * ajax 提交审批
        */
+      
+
   function ajaxShenpin(obj,id){
 
-     var html  = '<from action="/admin/user/okokoko/"><input type="radio" style="margin-left:20px;cursor: pointer;" name="shenpi" value="1"  id="radio1" checked><label for="radio1" style="padding-left: 8px;padding-right: 8px;font-size: 16px;font-weight: bold;cursor: pointer;">审批通过</label><input type="radio" name="shenpi" value="2" id="radio2" style="cursor: pointer;"><label for="radio2" style="padding-left: 8px;cursor: pointer;padding-right: 8px;font-size: 16px;font-weight: bold;">审批未通过</label><br/><br/><textarea name="text" id="text" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea><br><div style="width: 100%;text-align: center;"></div></from>';
+     var html  = '<from action="/admin/user/okokoko/"><input type="radio" style="margin-left:20px;cursor: pointer;" name="shenpi" value="1"  id="radio1" checked><label for="radio1" style="padding-left: 8px;padding-right: 8px;font-size: 16px;font-weight: bold;cursor: pointer;">审批通过</label><input type="radio" name="shenpi" value="2" id="radio2" style="cursor: pointer;"><label for="radio2" style="padding-left: 8px;cursor: pointer;padding-right: 8px;font-size: 16px;font-weight: bold;">审批未通过</label><br/><br/><textarea name="text" id="text" required lay-verify="required" placeholder="请输入操作说明" class="layui-textarea"></textarea><br><div style="width: 100%;text-align: center;"></div><input type="hidden" id="shenpiid" value="'+id+'"/></from>';
         layer.open({
-          title: '在线调试'
+          title: '审核审批'
           ,content: html
           ,resize:false
           ,area: ['500px', '300px']
@@ -106,16 +133,15 @@ function shenpin(){
             layer.close(index);
           }
         });     
-    
-   
         
   }
 
 
-  layui.use(['laypage','form','layer','laydate'], function(){
+  layui.use(['laypage','form','layer','laydate','upload'], function(){
   var laypage = layui.laypage,
   layer = layui.layer,
   laydate = layui.laydate;
+var upload = layui.upload;
 
 //执行一个laydate实例
         laydate.render({
@@ -138,11 +164,37 @@ function shenpin(){
     jump:function(obj,first){
       if (!first) {
         var curr = obj.curr;
-        window.location.href = "/admin/user/withdrawals?limit="+obj.limit+"&curr="+curr+"&nick="+"{$nick}";
+      var start = $('#start').val();
+      var end = $('#end').val();
+        window.location.href = "/admin/user/withdrawals?limit="+obj.limit+"&curr="+curr+"&nick="+"{$nick}"+"&start="+start+"&end="+end;
       }
     }
   })
-
+// 上传组件
+   
+  //执行实例
+  var uploadInst = upload.render({
+    elem: '#test1' //绑定元素
+    ,url: '/admin/user/withdupdate/' //上传接口
+    ,accept: 'images' //允许上传的文件类型
+    ,data:{id: function(){
+              return $('#hidden_data_id').attr('data-id');
+            }
+        }
+     ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+      layer.load(); //上传loading
+    }
+    ,done: function(res){
+      //上传完毕回调
+      console.log(res);
+      layer.msg(res.err);
+       layer.closeAll('loading'); //关闭loading
+    }
+    ,error: function(){
+      //请求异常回调
+       layer.closeAll('loading'); //关闭loading
+    }
+  });
     
 }); 
 
@@ -153,7 +205,7 @@ function shenpin(){
     $('#withdrawals').click(function(){
       var start = $('#start').val();
       var end = $('#end').val();
-      window.location.href = "/admin/User/withdrawals?nick="+$('.nick').val()+"&start="+start+"&end="+end;
+      window.location.href = "/admin/User/withdrawals?nick="+$('#nick').val()+"&start="+start+"&end="+end;
     })
     $('#ShenpiSub').click(function(){
       alert('12345');

@@ -1,0 +1,98 @@
+{include file="public/header"}
+<body>
+<style>
+.layui-select-title input {
+  width: 100px;
+}
+.layui-input-block {
+  width: 500px;
+  float: left;
+  margin-left: 10px; 
+}
+.layui-input-block span{
+  line-height: 38px;
+  color: #999;
+  cursor: pointer;
+}
+
+.layui-input-block span:hover{
+  color: #333;
+}
+.layui-input-block input{
+  width: 180px;
+  display: initial;
+}
+</style>
+<br>
+<form class="layui-form">
+
+ <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">用户名 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <input type="text" name="frozen_money" value="{$data['user_nick']}" disabled="true" autocomplete="off" class="layui-input"> 
+    </div>
+  </div>
+
+   <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">账单 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <input type="text" name="frozen_money" value="{$data['bill']}" disabled="true" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+   <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">提现金额 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <input type="text" name="frozen_money" value="{$data['money']}" disabled="true" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">类型 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <input type="text" name="frozen_money" value="{$data['type'] == 1?'支付宝':($data['type'] == 2?'微信':'银行卡')}" disabled="true" autocomplete="off" class="layui-input"> 
+      <?php
+        
+        if($data['type'] == 3){
+            echo '<span style="color: red;">银行卡账号：'.$data['bank'].',账户名：'.$data['bname'].'</span>';
+          }else{
+            echo '<span style="color: red;">支付宝账号/微信账号：'.$data['zhanghao'].'</span>';
+        }
+
+      ?>
+    </div>
+  </div>
+
+
+   <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">审批时间 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <input type="text" name="frozen_money" value="{$data['shenpin_time']|date='Y-m-d h:i:s',###}" disabled="true" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+   <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">提现时间 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <input type="text" name="frozen_money" value="{$data['is_withdrawals_time']|date='Y-m-d h:i:s',###}" disabled="true" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">提现说明 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <textarea name="desc" placeholder="请输入操作备注" disabled="true" class="layui-textarea desc">{$data['tixain_shuoming']}</textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">转账截图 </label>
+    <div class="layui-input-block" style="margin-left: 10px;">
+      <img src="{$data['zhuanzhang_img']}" style="width: 380px;">
+    </div>
+  </div>
+
+</form>
+
+</body>
+</html>
