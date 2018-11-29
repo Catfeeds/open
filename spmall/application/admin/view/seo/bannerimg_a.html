@@ -1,0 +1,195 @@
+﻿{include file="public/header"}
+
+
+  <style type="text/css">
+    .layui-form-item label{
+      width: 100px;
+    }
+    .layui-input-inline input{
+      /*width: 320px;*/
+    }
+    .color-box {
+      float:left;
+      width:30px;
+      height:30px;
+      margin:5px;
+      border: 1px solid white;
+    }
+  </style>
+
+  <body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+<!-- **********************广告图************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_message" class="layui-form-label">
+                  <span class="x-red">*</span>广告图
+              </label>
+              <div class="layui-input-inline">
+                  <button type="button" class="layui-btn" id="test1">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                  </button>
+                  <br><br>
+                  <a class="adver_infro_img_a" href="javascript:void('0')" target="_blank"><img data-src="" class="url" src="" style="width: 500px;height: 333px;" /></a>
+                  <input type="hidden" name="url_hidden" id="url_hidden" >
+              </div>
+          </div>
+<!-- ********************跳转链接***************************************** -->
+          <div class="layui-form-item">
+              <label for="link" class="layui-form-label">
+                  <span class="x-red">*</span>跳转链接
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" name="link" value=""
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+<!-- ********************图片底色***************************************** -->
+          <div class="layui-form-item">
+              <label for="color" class="layui-form-label">
+                  配图颜色
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" name="color" value=""
+                  autocomplete="off" class="layui-input" placeholder="默认为黑色" id="color-box">
+                  <input type="hidden" name="color" id="color">
+              </div>
+          </div>
+<!-- ********************广告权重***************************************** -->
+          <div class="layui-form-item">
+              <label for="weight" class="layui-form-label">
+                  广告权重
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" name="weight" placeholder="默认为50" value=""
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+<!-- ********************是否显示***************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_infro_link" class="layui-form-label">
+                  <span class="x-red"></span>是否显示
+              </label>
+              <div class="layui-input-inline">
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="status" value="0" lay-skin="switch" lay-text="ON|OFF" checked>
+              </div>
+          </div>
+
+          <!-- ******************************************************************* -->
+          <br>
+          <div class="layui-form-item">
+              <label for="L_repass" class="layui-form-label">
+              </label>
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  添加  
+              </button>
+          </div>
+      </form>
+    </div>
+    <script>
+
+        layui.use(['form','layer','laydate','upload'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer
+          ,laydate = layui.laydate
+          ,upload = layui.upload;
+          //刷新页面
+          function repla()
+                {
+                  parent.location.reload();
+                }
+
+         
+          //监听提交
+          form.on('submit(add)', function(data){
+            var arr = new Array();
+            var datalist = jQuery.parseJSON(JSON.stringify(data.field));
+            if (!datalist['url_hidden']) {
+              layer.msg('请填写完整信息');
+              return false;
+            }
+
+            var arr = {
+                    "url" : datalist["url_hidden"],
+                    "weight" : datalist["weight"] == ""?50:datalist["weight"],
+                    "link" : datalist["link"] == "" ? "javascript:void(0)":datalist["link"],
+                    "status" : datalist["status"] == "0"?0:1,
+                    "color" : datalist["color"] == ""?"#000000":datalist["color"]
+            };
+            
+            //发异步，把数据提交给php
+            $.ajax({
+              type : 'post',
+              url : '/admin/seo/bannerimg_add',
+              data : {'data':JSON.stringify(arr),'type':'ined'},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                if (data['core'] == 0) {
+                   layer.msg(data['message'], {icon: 5},function () {});
+              }else{
+                   layer.msg(data['message'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+              },
+              error:function(){
+                layer.msg("请求出错，请检查是否网络问题！！！");
+              }
+            })
+            return false;
+          });
+     
+    // 上传组件
+    var uploadInst = upload.render({
+      elem: '#test1' //绑定元素
+      ,url: '/admin/seo/uploadImg/' //上传接口
+      ,data:{
+          "type":"bannerimg",
+          "url":"adver\\bannerimg",
+          "cc":"1980*1080"
+      }
+      ,accept: 'images'  // 限制上传的类型
+      ,acceptMime: 'image/jpg, image/png'  //（只显示 jpg 和 png 文件）
+      ,before: function(obj){ //上传前回调。
+        layer.load(); //上传loading
+      }
+      ,done: function(res){
+        //上传完毕回调
+        layer.msg(res.msg);
+        var url = "http://"+"{$_SERVER['HTTP_HOST']}/"+res.url.replace(/\\/g,"/");
+        $('.url').attr('src',url);
+        $('.url').attr('data-src',res.url.replace(/\\/g,"/"));
+        $('.url').attr('href',url);
+        $('#url_hidden').attr('value',"/"+res.url.replace(/\\/g,"/"));
+        layer.closeAll('loading'); //关闭loading
+      }
+      ,error: function(){
+        //请求异常回调
+        layer.closeAll('loading'); //关闭loading
+      }
+    });
+          
+        });
+          
+    </script>
+    <script>
+      $(function(){
+        $('#color-box').colpick({
+          colorScheme:'dark',
+          layout:'rgbhex',
+          color:'ff8800',
+          onSubmit:function(hsb,hex,rgb,el) {
+            $(el).css('background-color', '#'+hex);
+            $(el).colpickHide();
+            $("#color").attr("value", '#'+hex);
+          }
+        })
+      })
+    </script>
+  </body>
+
+</html>

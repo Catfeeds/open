@@ -26,6 +26,14 @@
 
 <div class="demoTable layui-form" style="float: right;margin-right: 20px;">
   <div class="layui-inline">
+    <select name="adver_id" id="">
+      <option value="0">选择广告位</option>
+      {volist name="adver" id="adgg"}
+        <option value='{$adgg["adver_id"]}'>{$adgg["adver_name"]}</option>
+      {/volist}
+    </select>
+  </div>
+  <div class="layui-inline">
     <input class="layui-input" value="{$start|date='Y-m-d',###}" placeholder="开始日" name="start" id="start">
   </div>
   <div class="layui-inline">
@@ -39,7 +47,7 @@
     <td width="6%">id</td>
     <td>广告位</td>
     <td>广告名称</td>
-    <td>广告图片</td>
+    <td style="width: 60px;height: 46px;">广告图片</td>
     <td width="10%">点击率（点击/展现）</td>
     <td>跳转链接</td>
     <td>广告显示时间</td>
@@ -51,9 +59,10 @@
 
   {volist name="data" id="vo"}
 	 <tr>
+      <td>{$vo['adver_infro_id']}</td>
       <td>{$vo['adver_name']}</td>
       <td>{$vo['adver_infro_name']}</td>
-      <td><img src="{$vo['adver_infro_img']}" alt="点击查看大图"></td>
+      <td style="width: 50px;height: 46px;"><img src="{$vo['adver_infro_img']}" width="60px" alt="点击查看大图"></td>
       <td>{$vo['adver_infro_click']}</td>
       <td>{$vo['adver_infro_link']}</td>
       <td>{$vo['adver_infro_rasetime']|date="Y-m-d h:i:s",###} ~ {$vo['adver_infro_endtime']|date="Y-m-d h:i:s",###}</td>
@@ -61,9 +70,8 @@
       <!-- <td>{$vo['adver_infro_open_watemark'] == 0?"开启":"关闭"}</td> -->
       <td>{$vo['adver_infro_static'] == 0?"开启":"关闭"}</td>
       <td>
-         <a class="layui-btn layui-btn-primary layui-btn-xs" style="height: 25px;" lay-event="detail" onclick="ajaxaAiadd(this,{$vo['adverI_id']})">修改内容</a>
-        
-      <a class="layui-btn layui-btn-xs" style="height: 25px;" onclick="ajaxaidel(this,{$vo['adverI_id']})" lay-event="delete">删除</a>
+         <a class="layui-btn layui-btn-primary layui-btn-xs" style="height: 25px;" lay-event="detail" onclick="ajaxtc(this,{$vo['adver_infro_id']},'修改广告','/admin/seo/adverIae')">修改内容</a>
+        <a class="layui-btn layui-btn-xs" style="height: 25px;" onclick="ajaxaidel(this,{$vo['adver_infro_id']})" lay-event="delete">删除</a>
       </td>
 	  </tr>
   {/volist}
@@ -80,21 +88,20 @@ function ajaxaidel(obj,id){
       }, function(){
         $.ajax({
           type: "post",
-          url: "/admin/seo/adverIAjaxData",
+          url: "/admin/seo/ajax_ai_data",
           data: {"id":id,"type":"del"},
           success:function(data){
-            var data = jQuery.parseJSON(data);
-            console.log(data['status']);
-            if (data['status'] == 0) {
-              layer.msg(data['info'],function(){
+            if (data['core'] == 0) {
+              layer.msg(data['message'],function(){
                 layer.closeAll('dialog'); 
-            });
+              });
               return false;
             }
-            layer.msg(data['info'],function(){
+            layer.msg(data['message'],function(){
             $(obj).parent('td').parent('tr').remove();
               layer.closeAll('dialog'); 
             });
+            window.location.reload();
          },error:function(){
             layer.msg("网络出错！！！");
          }

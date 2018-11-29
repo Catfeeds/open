@@ -1,0 +1,113 @@
+{include file="public/header"}
+<body>
+	<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">运营管理</a>
+        <a>
+          <cite>首页海报</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;首页海报列表, 由平台设置管理.</span>
+</blockquote>
+<br>
+
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+ <tr>
+    <td colspan="11">
+  <button class="layui-btn" data-type="reload" onclick="ajaxtc(this,0,'添加首页海报','/admin/seo/bannerimg_a')" lay-submit lay-filter="adverI">添加</button>
+    <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
+
+    </td>
+  </tr>
+ <tr>
+    <td width="6%">id</td>
+    <td>图片</td>
+    <td>跳转链接</td>
+    <td>状态</td>
+    <td>时间</td>
+    <td width="10%">操作</td>
+  </tr>
+
+  {volist name="data" id="vo"}
+	 <tr>
+      <td>{$vo['id']}</td>
+      <td style="width: 50px;height: 46px;"><a href="{$vo['url']}" target="_blank"><img src="{$vo['url']}" width="60px" title="点击查看大图"></a></td>
+      <td><input type="text" class="layui-input" name="link" id="link" value="{$vo['link']}"></td>
+      <td>
+      <input type="checkbox" name="zzz" lay-skin="switch" {if condition="$vo['status'] == 0"}checked{/if} lay-text="开启|关闭"> </td>
+      <td>{$vo[\'time\']|date="Y-m-d h:i:s",###}</td>
+      <td>
+        <a class="layui-btn layui-btn-xs" style="height: 25px;" onclick="ajaxaidel(this,{$vo['id']})" lay-event="delete">删除</a>
+      </td>
+	  </tr>
+  {/volist}
+</table>
+<input type="hidden" class="hidden_data_id" id="hidden_data_id" >
+<div id="list2" style="text-align: center;"></div>
+<script>
+  /**************************************************************************/
+
+function ajaxaidel(obj,id){
+  if ($(obj).attr('lay-event') == "delete") {
+    layer.confirm('您确定要删除这条数据吗？', {
+      btn: ['确定','取消'] //按钮
+      }, function(){
+        $.ajax({
+          type: "post",
+          url: "/admin/seo/ajax_ai_data",
+          data: {"id":id,"type":"del"},
+          success:function(data){
+            if (data['core'] == 0) {
+              layer.msg(data['message'],function(){
+                layer.closeAll('dialog'); 
+              });
+              return false;
+            }
+            layer.msg(data['message'],function(){
+            $(obj).parent('td').parent('tr').remove();
+              layer.closeAll('dialog'); 
+            });
+            window.location.reload();
+         },error:function(){
+            layer.msg("网络出错！！！");
+         }
+       });
+  });
+
+    return false;
+  }
+  }
+
+
+  layui.use(['laypage','layer','laydate'], function(){
+  var laypage = layui.laypage,
+  layer = layui.layer,
+  laydate = layui.laydate;
+
+//执行一个laydate实例
+        laydate.render({
+          elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+          elem: '#end' //指定元素
+        });
+
+// 上传组件
+   
+}); 
+
+
+
+</script>
+
+</body>
+</html>

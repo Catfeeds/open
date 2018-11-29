@@ -7,6 +7,7 @@ use think\Request;
 use app\admin\common\Base;
 use app\common\admin\Log;
 use app\common\admin\Upload;
+use think\Loader;
 
 /**
 *
@@ -44,7 +45,6 @@ class Seo extends Base
 				// ->where('a.adver_time','<',$end)
 				->page($curr,$limit)
 				->select();
-
 		$this->assign([
 				'data'=>$data,
 				'datanum'=>count($data),
@@ -171,14 +171,16 @@ class Seo extends Base
 		$data = Db::table('shop_adver_infro')
 				->alias('a')
 				->join('shop_adver b','a.adver_id = b.adver_id')
-				->where('a.adver_infro_crater_time','>',$start)
-				->where('a.adver_infro_crater_time','<',$end)
+				// ->where('a.adver_infro_crater_time','>',$start)
+				// ->where('a.adver_infro_crater_time','<',$end)
 				->field('a.*,b.adver_name')
 				->page($curr,$limit)
 				->select();
+		$adver = Db::table('shop_adver')->field('adver_id,adver_name')->select();
 
 		$this->assign([
 				'data'=>$data,
+				'adver'=>$adver,
 				'datanum'=>count($data),
 				'limit'=>$limit,
 				'curr'=>$curr,
@@ -204,6 +206,99 @@ class Seo extends Base
 		return view('adver_infro_a_e');
 	}
 
+	public function ajax_ai_data(){
+		$type = input("post.type");
+		switch ($type) {
+			// 添加编辑   id为0添加   其他编辑
+			case 'ined':
+				if(input("post.id") == "0") {
+					// 解析数据
+					$data = json_decode(input("post.data"),true); 
+					// 验证器验证
+					// $co = Db("shop_adver_infro")
+					// 		->where("adver_id",$data["adver_id"])
+					// 		// ->where("adver_infro_endtime",['>',strtotime($data["adver_infro_endtime"])],['<',strtotime($data["adver_infro_rasetime"])],'and')
+					// 		// ->where("adver_infro_rasetime",['>',strtotime($data["adver_infro_endtime"])],['<',strtotime($data["adver_infro_rasetime"])],'and')
+					// 		->where("adver_infro_rasetime","<",strtotime($data["adver_infro_rasetime"]))
+					// 		->where("adver_infro_endtime",">",strtotime($data["adver_infro_endtime"]))
+					// 		->select();
+					// print_r($co);die;
+					// if ($co) {
+					// 	$data['core'] = 0;
+					// 	$data['message'] = "该时间端已存在广告，请查询后重新添加";
+					// 	return $data;
+					// }
+					$adverVa = Loader::Validate("AdverInValidate");
+					if (!$adverVa->scene('add')->check($data)) {
+						$data['core'] = 0;
+						$data['message'] = $adverVa->getError();
+						return $data;
+					}
+
+					// 数据操作
+					$data["adver_infro_crater_time"] = time();
+					$data["adver_infro_rasetime"] = strtotime($data["adver_infro_rasetime"]);
+					$data["adver_infro_endtime"] = strtotime($data["adver_infro_endtime"]);
+					$i  = Db::table('shop_adver_infro')->insert($data);
+					if (!$i) {
+						$data['core'] = 0;
+						$data['message'] = "添加失败";
+						return $data;
+					}else{
+
+						$data['core'] = 1;
+						$data['message'] = "添加成功";
+						return $data;
+					}
+
+				}else{
+					$data = json_decode(input("post.data"),true); 
+						$adverVa = Loader::Validate("AdverInValidate");
+					if (!$adverVa->scene('add')->check($data)) {
+						$data['core'] = 0;
+						$data['message'] = $adverVa->getError();
+						return $data;
+					}
+
+					// 数据操作
+					$data["adver_infro_rasetime"] = strtotime($data["adver_infro_rasetime"]);
+					$data["adver_infro_endtime"] = strtotime($data["adver_infro_endtime"]);
+					$i  = Db::table('shop_adver_infro')->where("adver_infro_id",input("post.id"))->update($data);
+					if ($i) {
+						$data['core'] = 1;
+						$data['message'] = "修改成功";
+						return $data;
+					}
+						$data['core'] = 0;
+						$data['message'] = "修改失败";
+						return $data;
+					}
+				break;
+
+			// 删除
+			case 'del':
+				# code...
+				$id = input("post.id");
+				if (is_numeric($id)) {
+					$i = Db::table('shop_adver_infro')->where('adver_infro_id',$id)->delete();
+					if ($i) {
+						$data['core'] = 1;
+						$data['message'] = "删除成功";
+						return $data;
+					}
+						$data['core'] = 0;
+						$data['message'] = "删除失败";
+						return $data;
+				}else{
+					$data['core'] = 0;
+					$data['message'] = "参数错误！！！";
+					return $data;
+				}
+
+				break;
+
+		}
+	}
 
 	/**
 	 * [coupon 优惠券列表]
@@ -219,6 +314,27 @@ class Seo extends Base
 	 */
 	public function bannerimg(){
 
+		$data = Db::table('shop_bannerimg')->select();
+		$this->assign("data",$data);
+		return view();
+	}
+
+	public function bannerimg_a()
+	{
+		return $this->fetch("bannerimg_a");
+	}
+
+	public function bannerimg_add(){
+		$data = json_decode(input("post.data"),true);
+		$i = Db("shop_bannerimg")->insert($data);
+		if ($i) {
+			$data['core'] = 1;
+			$data['message'] = "添加成功";
+			return $data;
+		}
+			$data['core'] = 0;
+			$data['message'] = "添加失败";
+			return $data;
 	}
 
 	/**

@@ -1,4 +1,6 @@
 ﻿{include file="public/header"}
+
+
   <style type="text/css">
     .layui-form-item label{
       width: 100px;
@@ -6,17 +8,25 @@
     .layui-input-inline input{
       /*width: 320px;*/
     }
+    .color-box {
+      float:left;
+      width:30px;
+      height:30px;
+      margin:5px;
+      border: 1px solid white;
+    }
   </style>
+
   <body>
     <div class="x-body layui-anim layui-anim-up">
         <form class="layui-form">
 <!-- *****************************广告名称*********************************** -->
           <div class="layui-form-item">
-              <label for="adver__infro_name" class="layui-form-label">
+              <label for="adver_infro_name" class="layui-form-label">
                   <span class="x-red">*</span>广告名称
               </label>
               <div class="layui-input-inline">
-                  <input type="text" lay-verify="required" name="adver__infro_name" value="{$data['adver__infro_name']}" 
+                  <input type="text" lay-verify="required" name="adver_infro_name" value="{$data['adver_infro_name']}" 
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -26,12 +36,13 @@
                   <span class="x-red">*</span>广告位
               </label>
               <div class="layui-input-inline">
-                  <select name="adver" lay-verify="required" lay-filter="adver">
+                  <select name="adver" lay-filter="adver">
                         <option value="0">请选择广告位</option>
                     {volist name="adver" id="ad"}
-                        <option data-id="{$ad['adver_id']}" value="{$ad['adver_specif']}">{$ad['adver_name']}</option>
+                        <option value="{$ad['adver_specif']}__MM__{$ad['adver_id']}" {if condition="$ad['adver_id'] == $data['adver_id']"}selected="selected"{/if}>{$ad['adver_name']}</option>
                     {/volist}
                   </select>
+                  <input type="hidden" name="adver_hidder" id="adver_hidder" value="{$data['adver_id']}">
               </div>
           </div>
 
@@ -52,7 +63,8 @@
                     <i class="layui-icon">&#xe67c;</i>上传图片
                   </button>
                   <br><br>
-                  <a class="adver_infro_img_a" href="javascript:void('0')" target="_blank"><img data-src="" class="adver_infro_img" src=""/></a>
+                  <a class="adver_infro_img_a" href="javascript:void('0')" target="_blank"><img data-src="" class="adver_infro_img" src="{$data['adver_infro_img']}" {if condition="!empty($data['adver_infro_img'])"}style="width: 500px;height: 333px;"{/if}/></a>
+                  <input type="hidden" name="adver_infro_img_hidden" id="adver_infro_img_hidden" value="{$data['adver_infro_img']}">
               </div>
           </div>
 
@@ -65,23 +77,47 @@
                   请选择广告位再添加图片，规格为尺寸： *  图片规定规格
               </div>
           </div>
+<!-- *************************广告时间************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_specif" class="layui-form-label">
+                  <span class="x-red">*</span>广告时间
+              </label>
+              <div class="layui-input-inline" style="width: 180px;">
+                   <input class="layui-input" lay-verify="required" style="width: 180px;" placeholder="开始日" value="{$data['adver_infro_rasetime']|date='Y-m-d h:i:s',###}" name="start" id="start">
+              </div>
+              <div class="layui-input-inline" style="width: 5px;text-align: center;font-weight: bold;height: 38px;line-height: 38px;">-</div>
+              <div class="layui-input-inline" style="width: 180px;">
+                  <input class="layui-input" style="width: 180px;" lay-verify="required" placeholder="截止日" value="{$data['adver_infro_endtime']|date='Y-m-d h:i:s',###}" name="end" id="end">
+              </div>
+          </div>
 <!-- ********************跳转链接***************************************** -->
           <div class="layui-form-item">
               <label for="adver_infro_link" class="layui-form-label">
                   跳转链接
               </label>
               <div class="layui-input-inline">
-                  <input type="text" lay-verify="required" name="adver_infro_link" value="{$data['adver_infro_link']}"
+                  <input type="text" name="adver_infro_link" value="{$data['adver_infro_link']}"
                   autocomplete="off" class="layui-input">
+              </div>
+          </div>
+<!-- ********************图片底色***************************************** -->
+          <div class="layui-form-item">
+              <label for="adver_infro_color" class="layui-form-label">
+                  配图颜色
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" name="adver_infro_color" value="{$data['adver_infro_color']}"
+                  autocomplete="off" class="layui-input" placeholder="默认为黑色" id="color-box">
+                  <input type="hidden" name="adver_infro_color" id="adver_infro_color">
               </div>
           </div>
 <!-- ********************广告权重***************************************** -->
           <div class="layui-form-item">
               <label for="adver_infro_weight" class="layui-form-label">
-                  <span class="x-red">*</span>广告权重
+                  广告权重
               </label>
               <div class="layui-input-inline">
-                  <input type="text" lay-verify="required" name="adver_infro_weight" value="{$data['adver_infro_weight']}"
+                  <input type="text" name="adver_infro_weight" placeholder="默认为50" value="{$data['adver_infro_weight']}"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -100,23 +136,10 @@
                   <span class="x-red"></span>是否显示
               </label>
               <div class="layui-input-inline">
-                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="adver_infro_static" lay-skin="switch" lay-text="ON|OFF" checked>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="adver_infro_static" value="0" lay-skin="switch" lay-text="ON|OFF" checked>
               </div>
           </div>
 
-<!-- *************************广告时间************************************** -->
-          <div class="layui-form-item">
-              <label for="adver_specif" class="layui-form-label">
-                  <span class="x-red">*</span>广告时间
-              </label>
-              <div class="layui-input-inline" style="width: 180px;">
-                   <input class="layui-input" style="width: 180px;" placeholder="开始日" name="start" id="start">
-              </div>
-              <div class="layui-input-inline" style="width: 5px;text-align: center;font-weight: bold;height: 38px;line-height: 38px;">-</div>
-              <div class="layui-input-inline" style="width: 180px;">
-                  <input class="layui-input" style="width: 180px;" placeholder="截止日" name="end" id="end">
-              </div>
-          </div>
           <!-- ******************************************************************* -->
           <br>
           <div class="layui-form-item">
@@ -161,35 +184,49 @@
         });     
           //监听提交
           form.on('submit(add)', function(data){
+            var arr = new Array();
             var datalist = jQuery.parseJSON(JSON.stringify(data.field));
-            console.log(datalist);
-            // if (datalist['adver_name'] == ''||datalist['adver_position'] == ''||datalist['adver_specif0'] == ''||datalist['adver_specif1'] == '') {
-            //   layer.msg('请填写完整信息');
-            //   return false;
-            // }
-            // //发异步，把数据提交给php
-            // $.ajax({
-            //   type : 'post',
-            //   url : '/admin/seo/adverAjaxData',
-            //   data : {'data':JSON.stringify(data.field),'type':'ined','id':'{$id}'},
-            //   dataType: 'json',
-            //   success:function(data){  //成功的回调函数
-            //     if (data['core'] == 0) {
-            //        layer.msg(data['message'], {icon: 5},function () {});
-            //   }else{
-            //        layer.msg(data['message'], {icon: 6},function () {
-            //         // 获得frame索引
-            //           var index = parent.layer.getFrameIndex(window.name);
-            //           //关闭当前frame
-            //           parent.layer.close(index);
-            //           setInterval(repla(),2000);});
-            //       }
-            //   },
-            //   error:function(){
-            //     layer.msg("请求出错，请检查是否网络问题！！！");
-            //   }
-            // })
-            // return false;
+            if (datalist['adver_hidder'] == ''||datalist['adver_infro_img_hidden'] == ''||datalist['end'] == ''||datalist['start'] == '') {
+              layer.msg('请填写完整信息');
+              return false;
+            }
+
+
+            var arr = {
+                    "adver_infro_name" : datalist["adver_infro_name"],
+                    "adver_id" : datalist["adver_hidder"],
+                    "adver_infro_img" : datalist["adver_infro_img_hidden"],
+                    "adver_infro_link" : datalist["adver_infro_link"],
+                    "adver_infro_static" : datalist["adver_infro_static"] == "0"?0:1,
+                    "adver_infro_weight" : datalist["adver_infro_weight"] == ""?50:datalist["adver_infro_weight"],
+                    "adver_infro_rasetime" : datalist["start"],
+                    "adver_infro_endtime" : datalist["end"],
+                    "adver_infro_color" : datalist["adver_infro_color"] == ""?"#000000":datalist["adver_infro_color"]
+            };
+            
+            //发异步，把数据提交给php
+            $.ajax({
+              type : 'post',
+              url : '/admin/seo/ajax_ai_data',
+              data : {'data':JSON.stringify(arr),'type':'ined','id':'{$id}'},
+              dataType: 'json',
+              success:function(data){  //成功的回调函数
+                if (data['core'] == 0) {
+                   layer.msg(data['message'], {icon: 5},function () {});
+              }else{
+                   layer.msg(data['message'], {icon: 6},function () {
+                    // 获得frame索引
+                      var index = parent.layer.getFrameIndex(window.name);
+                      //关闭当前frame
+                      parent.layer.close(index);
+                      setInterval(repla(),2000);});
+                  }
+              },
+              error:function(){
+                layer.msg("请求出错，请检查是否网络问题！！！");
+              }
+            })
+            return false;
           });
 
           /************************/
@@ -199,9 +236,11 @@
       }else{
           $("#test1").removeAttr('disabled');
       }
-      $('#chicun').html("此广告位的尺寸大小位："+data.value);
-      $('#chicun').attr('data-cc',data.value);
-      $('#chicunsc').html("规格为尺寸："+data.value+" 图片规定规格");
+      var data = data.value.split("__MM__");
+      $('#chicun').html("此广告位的尺寸大小位："+data[0]);
+      $('#chicun').attr('data-cc',data[0]);
+      $('#adver_hidder').attr('value',data[1]);
+      $('#chicunsc').html("规格为尺寸："+data[0]+" 图片规定规格");
     });     
     // 上传组件
     var uploadInst = upload.render({
@@ -227,6 +266,7 @@
         $('.adver_infro_img').css('width',"500px");
         $('.adver_infro_img').css('height',"333px");
         $('.adver_infro_img_a').attr('href',url);
+        $('#adver_infro_img_hidden').attr('value',"/"+res.url.replace(/\\/g,"/"));
         layer.closeAll('loading'); //关闭loading
       }
       ,error: function(){
@@ -236,6 +276,20 @@
     });
           
         });
+    </script>
+    <script>
+      $(function(){
+        $('#color-box').colpick({
+          colorScheme:'dark',
+          layout:'rgbhex',
+          color:'ff8800',
+          onSubmit:function(hsb,hex,rgb,el) {
+            $(el).css('background-color', '#'+hex);
+            $(el).colpickHide();
+            $("#adver_infro_color").attr("value", '#'+hex);
+          }
+        })
+      })
     </script>
   </body>
 

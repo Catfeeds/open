@@ -23,9 +23,9 @@ class Upload
 		    //创建目录
 		    $destina = ROOT_PATH;
 		    $destination = 'public\static\image\\'.$url.'\\'.date('Ymd',time()).'\\';
-		 //    if (!file_exists($destination)){
-	  //           mkdir ($destination,0777,true);
-			// }
+		    if (!file_exists($destina.$destination)){
+	            mkdir ($destina.$destination,0777,true);
+			}
 	        // 判断上箭头
 	        // 
 	        	if (isset($file) == '' || $url == '' ) {
