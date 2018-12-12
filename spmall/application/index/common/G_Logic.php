@@ -25,8 +25,6 @@ class G_Logic
 	    		$i[$key][$b[0]] = $b[1];
 			}
 		}
-		// var_dump($i);
-		// die;
 		$p = DB::query('call G_count("cat_id","'.$in['parent_id_path'].'","0","0")');
 		foreach ($p as $va) {
 			foreach ($va as $key => $value) {
@@ -93,7 +91,7 @@ class G_Logic
 		// var_dump($p[0]);
 		// die;
 		$data["ht1"] = $ht1 = '<ul class="select">'.$ht1.'</ul>';
-		$data["d"] = $p[0];
+		$data["d"] = empty($p[0])?'':$p[0];
 		/*
 		 						<li class="select-list">
 									<dl id="select1">

@@ -36,10 +36,6 @@ class Goods_cate extends Model
         	}
         }
         $data = array($list_handle_one,$list_handle_two,$list_handle_three);
-        // 	'list_handle_one' => $list_handle_one,
-        // 	'list_handle_two' => $list_handle_two,
-        // 	'list_handle_three' => $list_handle_three,
-        // ];
         return json_encode($data,true);
     }
 }

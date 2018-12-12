@@ -11,12 +11,11 @@ use think\Model;
 class Brand_class extends Model
 {
 	protected $table = "shop_brand";
-
-	// function __construct(argument)
-	// {
-	// 	# code...
-	// }
 	
+	public static function select(){
+
+	}
+
 	public static function brank_insert($data)
 	{
 		$meg = '已有此品牌';

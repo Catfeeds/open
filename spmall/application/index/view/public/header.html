@@ -118,7 +118,7 @@
 					   <div class="long-title"><span class="all-goods">全部分类</span></div>
 					   <div class="nav-cont">
 							<ul>
-								<li class="index"><a href="{:url('index')}">首页</a></li>
+								<li class="index"><a href="{:url('index/index')}">首页</a></li>
                                 <li class="qc"><a href="#">闪购</a></li>
                                 <li class="qc"><a href="#">限时抢</a></li>
                                 <li class="qc"><a href="#">团购</a></li>
@@ -134,10 +134,13 @@
                       <!--轮播 -->
 						<div class="am-slider am-slider-default scoll" data-am-flexslider id="demo-slider-0">
 							<ul class="am-slides">
-								<li class="banner1"><a href="introduction.html"><img src="__STATIC_imgage__/images/ad5.jpg" /></a></li>
+								{volist name="bannerimg" id="banimg"}
+									<li class="banner2" style="background: {$banimg['color']}"><a {if condition="$banimg['link'] != ''"}href="{$banimg['link']}"{/if} target="{$banimg['target']==1?'_blank':'_parent'}"><img src="{$banimg['url']}" width="760px" height="320px" /></a></li>
+								{/volist}
+								<!--<li class="banner1"><a href="introduction.html"><img src="__STATIC_imgage__/images/ad5.jpg" /></a></li>
 								<li class="banner2"><a><img src="__STATIC_imgage__/images/ad6.jpg" /></a></li>
 								<li class="banner3"><a><img src="__STATIC_imgage__/images/ad7.jpg" /></a></li>
-								<li class="banner4"><a><img src="__STATIC_imgage__/images/ad8.jpg" /></a></li>
+								<li class="banner4"><a><img src="__STATIC_imgage__/images/ad8.jpg" /></a></li>-->
 							</ul>
 						</div>
 						<div class="clear"></div>	

@@ -326,6 +326,14 @@ class Seo extends Base
 
 	public function bannerimg_add(){
 		$data = json_decode(input("post.data"),true);
+		$data["time"] = time();
+		$count = Db("shop_bannerimg")
+				->where("status",0)
+				->count();
+		if ($count > 3) {
+			$data["status"] = 1;
+		}	
+
 		$i = Db("shop_bannerimg")->insert($data);
 		if ($i) {
 			$data['core'] = 1;
@@ -335,6 +343,50 @@ class Seo extends Base
 			$data['core'] = 0;
 			$data['message'] = "添加失败";
 			return $data;
+	}
+
+	public function bannerimg_edit(){
+		$id = input("post.id");
+		$value = input("post.value");
+		$type = input("post.type");
+		if ($type == "status" && $value != "1") {
+			$count = Db("shop_bannerimg")
+				->where("status",0)
+				->count();
+			if ($count > 2) {
+				$data['core'] = 0;
+				$data['message'] = "修改失败，不可以显示超过三个";
+				return $data;
+				}	
+		}
+		$i = Db("shop_bannerimg")
+				->where("id",$id)
+				->update([$type=>$value]);
+
+		if ($i) {
+			$data['core'] = 1;
+			$data['message'] = "修改成功";
+			return $data;
+		}
+			$data['core'] = 0;
+			$data['message'] = "修改失败";
+			return $data;	
+	}
+
+	public function bannerimg_del(){
+		$id = input("post.id");
+		$i = Db("shop_bannerimg")
+				->where("id",$id)
+				->delete();
+
+		if ($i) {
+			$data['core'] = 1;
+			$data['message'] = "删除成功";
+			return $data;
+		}
+			$data['core'] = 0;
+			$data['message'] = "删除失败";
+			return $data;	
 	}
 
 	/**

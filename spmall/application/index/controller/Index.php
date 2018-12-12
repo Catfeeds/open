@@ -40,18 +40,37 @@ class Index extends Base
 
         $user_id = Session::get('user_id');
         $user = Session::get('user');
-        $goods_cate = Goods_cate::goos_list__handel(Goods_cate::select());    //  商品类别表
-       $goods_cate = json_decode($goods_cate,true);
+        $bannerimg = Db::table('shop_bannerimg')->where("status",0)->field("url,link,color,target")->order("weight desc")->select();
 
 
-       //去缓存 
+        /************************* 缓存区 *******************************************/  
+        //  商品类别表
+        if (json_decode($redis->get("goods_cate"),true)) {
+            $goods_cate = json_decode($redis->get("goods_cate"),true);
+        }else{
+             $goods_cate = json_decode(Goods_cate::goos_list__handel(Goods_cate::select()),true);
+            $redis->set("goods_cate",json_encode($goods_cate),rand(3000, 3600));
+         }
+
+       //去友情链接
         if (Cache::get('link')) {
             $link = Cache::get('link');
         }else{
             $link = Db::table('shop_link')->select();
-            Cache::set('link',$link,3600);
+            Cache::set('link',$link,rand(3000, 3600));
         }
         
+        /************************* 结束 缓存区 *******************************************/
+
+        /********************* * 交互区 * ***********************************/
+        
+
+
+
+
+
+        /********************* * 交互区 * ***********************************/
+
         $linka = Db::view('shop_artcleclass','ac_id,ac_title')
                     ->view('shop_articlelist','al_title','shop_artcleclass.ac_id=shop_articlelist.ac_id')
                     ->where('shop_artcleclass.is_sys','=',1)
@@ -63,27 +82,36 @@ class Index extends Base
                     ->where('shop_articlelist.al_static','=',1)
                     ->field('ac_id,al_title')
                     ->select();
+                    
         foreach ($linka as $key => $value) {
            $i[$key] = $value['ac_title'];
         }
         $link_one = explode("_m_", implode(array_unique($i), "_m_"));
-        // var_dump();die;
+
 
         if(isset($user)){
             $data = Db::table('shop_user')->where('user_id',$user_id)->select();
             $lever = Db::table('shop_user_lever')->where('lever_id',$data[0]['user_lever'])->select();
-            //var_dump($lever[0]["lever_name"]);die;
             $this->assign([
                 'data' => $data[0],
                 'lever' => $lever[0]["lever_name"],
                 ]);
         }
+
+        /**
+         * user 用户信息
+         * linka 链接
+         * link_one 导航
+         * bannerimg 前台banner
+         * goods_cate 商品类别表
+         */
         $this->assign([
             'user'=> $user,
             'linka' => $linka,
             'link_one' => $link_one,
             'spmailgg' => $spmailgg,
             'link' => $link,
+            'bannerimg' => $bannerimg,
             'goods_cate' => $goods_cate
         ]);
         return $this->fetch('index');

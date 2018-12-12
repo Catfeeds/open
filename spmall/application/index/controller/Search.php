@@ -17,8 +17,7 @@ class Search extends Base
     	$link = $_SERVER['QUERY_STRING'];
 		$sele = G_Logic::goodsList($id,$link);  // 返回商品类 -> 规格
 		$navhtml = G_Logic::navigation($id);  // 返回导航栏
-    	// var_dump($sele);
-// die;
+
        $this->linkbutton();
        $this->assign([
 				'd' => $sele['d'],

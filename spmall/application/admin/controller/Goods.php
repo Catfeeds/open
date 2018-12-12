@@ -864,7 +864,8 @@ function attribute_index(Request $request){
 		// die;
 		$data = Goods_data::where('goods_id',$goods_id)->find();
 		$catelist = json_decode(Goods_cate::goos_list__handel(Db::table('shop_goods_category')->order('cate_id desc')->select()),true);  // 商品分类
-		$brand = Brand_class::select();
+		//$brand = Brand_class::select();
+		$brand = Db('shop_brand')->order('brand_id desc')->select();
 		$speclist = DB::table('shop_goods_type')->select();
 		//运费模板
 		$temp = Db::table('shop_freight_template')->field('template_id,template_name')->select();
