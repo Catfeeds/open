@@ -1,0 +1,152 @@
+{include file="public/header"}
+<body>
+	<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">运营管理</a>
+        <a>
+          <cite>客服管理</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" id="UserShuaxin" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <br>
+<blockquote class="layui-elem-quote layui-text">
+<span style="color:#00bcff;">操作提示</span><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;客服管理,可设置微信、QQ, 由平台设置管理.</span>
+</blockquote>
+<br>
+
+
+<table class="layui-table layui-form" style="width: 98%;margin: 10px auto;">
+ <tr>
+    <td colspan="11">
+  <button class="layui-btn" data-type="reload" onclick="ajaxtc(this,0,'添加首页海报','/admin/seo/bannerimg_a')" lay-submit lay-filter="adverI">添加</button>
+    <span class="layui-btn layui-bg-cyan" style="height: 30px;line-height: 30px;" data-type="reload">记录总数:  共 {$data|count} 条</span>
+
+    </td>
+  </tr>
+ <tr>
+    <td width="6%">id</td>
+    <td>图片</td>
+    <td>跳转链接</td>
+    <td>状态</td>
+    <td>时间</td>
+    <td width="20%">操作</td>
+  </tr>
+
+  {volist name="data" id="vo"}
+	 <tr>
+      <td>{$vo['id']}</td>
+      <td style="width: 50px;height: 46px;">
+        <a href="{$vo['url']}" class="url" target="_blank">
+          <img src="{$vo['url']}" id="url" width="60px" title="点击查看大图">
+        </a>
+      </td>
+      <td><input type="text" onchange="edit({$vo['id']},this.value)" class="layui-input" name="link" id="link" value="{$vo['link']}"></td>
+      <td>
+      <input type="checkbox" name="status" lay-filter="status" id="{$vo['id']}" lay-skin="switch" {if condition="$vo['status'] == 0"}checked{/if} lay-text="开启|关闭"> </td>
+      <td>{$vo[\'time\']|date="Y-m-d h:i:s",###}</td>
+      <td>
+        <a class="layui-btn layui-bg-red" style="height: 25px;line-height: 25px" onclick="ajaxaidel(this,{$vo['id']})" lay-event="delete">删除</a>
+      </td>
+	  </tr>
+  {/volist}
+</table>
+<input type="hidden" class="hidden_data_id" id="hidden_data_id" >
+<div id="list2" style="text-align: center;"></div>
+<script>
+  /**************************************************************************/
+
+function ajaxaidel(obj,id){
+  if ($(obj).attr('lay-event') == "delete") {
+    layer.confirm('您确定要删除这条数据吗？', {
+      btn: ['确定','取消'] //按钮
+      }, function(){
+
+
+$.post("/admin/seo/bannerimg_del/",{id:id},function(data){
+
+            if (data['core'] == 0) {
+              layer.msg(data['message'],function(){
+                layer.closeAll('dialog'); 
+              });
+              return false;
+            }
+            layer.msg(data['message'],function(){
+            $(obj).parent('td').parent('tr').remove();
+              layer.closeAll('dialog'); 
+            });
+            window.location.reload();
+
+          })
+  });
+
+    return false;
+  }
+  }
+
+
+  layui.use(['laypage','layer'], function(){
+  var laypage = layui.laypage,
+  layer = layui.layer;
+
+// 上传组件
+
+}); 
+
+
+//edit
+
+        layui.use(['form'], function(){
+            $ = layui.jquery;
+          var form = layui.form;
+        form.on('switch(status)', function(data){
+          var id = data.elem.id;
+          var status = data.elem.checked==true?0:(data.elem.checked==false?1:2);
+
+      if (id == '' || status == 2) {
+        layer.msg('参数有误');
+        return false;
+      }
+          $.post("/admin/seo/bannerimg_edit/",{id:id,value:status,type:"status"},function(data){
+            layer.msg(data["message"],{icon: data["core"]==0?5:6});
+          })
+        })
+})
+//
+function edit(id, value){
+    if (!CheckUrl(value) && value != '') {
+        layer.msg('请填写有效的号码');
+        return false;
+      }
+      if (id == '') {
+        layer.msg('参数有误');
+        return false;
+      }
+    $.post("/admin/seo/bannerimg_edit/",{id:id,value:value,type:"link"},function(data){
+      layer.msg(data["message"],{icon: data["core"]==0?5:6});
+    })
+}
+
+function CheckWX(str) {
+  var RegUrl = new RegExp();
+  RegUrl.compile("/^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/");
+  if (!RegUrl.test(str)) {
+    return false;
+  }
+    return true;
+} 
+function CheckQQ(str) {
+  var RegUrl = new RegExp();
+  RegUrl.compile("/^[1-9]\d{4,9}$/");
+  if (!RegUrl.test(str)) {
+    return false;
+  }
+    return true;
+} 
+
+</script>
+
+</body>
+</html>

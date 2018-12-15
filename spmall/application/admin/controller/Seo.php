@@ -324,6 +324,7 @@ class Seo extends Base
 		return $this->fetch("bannerimg_a");
 	}
 
+	// 添加banner图片
 	public function bannerimg_add(){
 		$data = json_decode(input("post.data"),true);
 		$data["time"] = time();
@@ -349,6 +350,7 @@ class Seo extends Base
 		$id = input("post.id");
 		$value = input("post.value");
 		$type = input("post.type");
+
 		if ($type == "status" && $value != "1") {
 			$count = Db("shop_bannerimg")
 				->where("status",0)
@@ -394,6 +396,20 @@ class Seo extends Base
 	 * @return [type] [description]
 	 */
 	public function kefu(){
+		$kefu = Db('shop_kefu')->where('is_delete',0)->select();
+		$this->assign([
+				'data' => $kefu,
+		]);
+		return $this->fetch();
+	}
+
+	// 客服信息修改
+	public function kefuEdit(){
+
+	}
+
+	// 客服信息删除  软删除
+	public function kefuDelete(){
 
 	}
 
@@ -441,7 +457,7 @@ class Seo extends Base
             页面找不到了
         </div>
         <div class="return">
-            <a href="https://www.csdn.net">返回首页</a>
+            <a href="'.$this->_server('HTTP_HOST').'">返回首页</a>
         </div>
     </div>';
 		return $html;
